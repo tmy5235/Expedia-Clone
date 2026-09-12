@@ -6,4 +6,4 @@
 
 ## Result
 
-The project keeps separate `frontend/` and `backend/` folders. Its documentation now describes CSV hotel search followed by SQLite booking CRUD. The application source still contains the Hello Agent calculator and has not yet been converted to the travel application.
+The project keeps separate `frontend/` and `backend/` folders. The Hello Agent calculator was replaced with the Part 1 CSV hotel search, while the documentation records SQLite booking CRUD as the later Part 2 scope.

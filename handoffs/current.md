@@ -13,8 +13,8 @@
 
 - Backend: 9 pytest tests passed.
 - Frontend: 4 Node tests, Oxlint, ESLint, and the production build passed.
-- Browser: `Harbor Lantern Hotel` returned trips `T001` and `T009` with expected dates and $300 totals.
-- Browser: `Oceanfront Resort` displayed a clear no-results message.
+- Browser: `Hotel` returned 8 matching stays with dates, nightly rates, and calculated totals.
+- Browser: `Fire` displayed a clear no-results message.
 - Browser console: no warnings or errors during the checked success flow.
 - Documentation: required report headings and project-context files are present.
 - Student review: the student confirmed the files looked good on September 11, 2026.
@@ -26,4 +26,4 @@
 
 ## Next task
 
-Upload `report.md` to the Part 1 submission. Begin Part 2 on a feature branch only after Part 1 is submitted and Part 2 work is authorized.
+Begin Part 2 on a feature branch only after Part 2 work is authorized.
