@@ -4,7 +4,7 @@
 
 Repository URL: <https://github.com/tmy5235/Expedia-Clone>
 
-Exact Part 1 commit: **Pending student review and accepted commit.**
+Exact Part 1 implementation commit: [`627cda2c36dfab77ffbf7cc74ff363a4198b8c17`](https://github.com/tmy5235/Expedia-Clone/commit/627cda2c36dfab77ffbf7cc74ff363a4198b8c17)
 
 ## Implementation
 
@@ -24,14 +24,14 @@ FastAPI validates the request and returns JSON from `GET /api/stays`. The Python
 
 Successful search:
 
-![Harbor Lantern Hotel search showing two matching stays](docs/screenshots/part1-search-results.jpg)
+![Harbor Lantern Hotel search showing two matching stays](https://github.com/tmy5235/Expedia-Clone/blob/627cda2c36dfab77ffbf7cc74ff363a4198b8c17/docs/screenshots/part1-search-results.jpg?raw=true)
 
 No-results search:
 
-![Oceanfront Resort search showing the no-results message](docs/screenshots/part1-no-results.jpg)
+![Oceanfront Resort search showing the no-results message](https://github.com/tmy5235/Expedia-Clone/blob/627cda2c36dfab77ffbf7cc74ff363a4198b8c17/docs/screenshots/part1-no-results.jpg?raw=true)
 
 ## Project context and next steps
 
-Project context: [README](README.md), [AGENTS](AGENTS.md), [design note](docs/design.md), [selected prompts](prompts/README.md), and [current handoff](handoffs/current.md). Replace these relative links with links to the submitted GitHub commit before uploading the report.
+Project context: [README](https://github.com/tmy5235/Expedia-Clone/blob/main/README.md), [AGENTS](https://github.com/tmy5235/Expedia-Clone/blob/main/AGENTS.md), [design note](https://github.com/tmy5235/Expedia-Clone/blob/main/docs/design.md), [selected prompts](https://github.com/tmy5235/Expedia-Clone/blob/main/prompts/README.md), and [current handoff](https://github.com/tmy5235/Expedia-Clone/blob/main/handoffs/current.md).
 
-Remaining work for Part 1 is the accepted Git commit, GitHub push, and replacement of the pending commit and relative links above with links to the submitted revision. Part 2 SQLite CRUD is outside the current scope.
+Part 1 is complete. The student reviewed the files, the implementation checkpoint is preserved on GitHub, and the required browser and automated checks passed. Part 2 SQLite CRUD remains outside this checkpoint. The next step is to upload this file to the Part 1 submission.

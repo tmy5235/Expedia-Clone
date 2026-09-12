@@ -6,7 +6,8 @@
 - Search accepts full or partial hotel names without case sensitivity.
 - Vue provides a labeled hotel search, results table, loading state, error message, and no-results message.
 - Results include the hotel, trip, dates, nights, nightly rate, and calculated stay total.
-- The required Part 1 documentation and report draft are present.
+- The required Part 1 documentation and completed report are present.
+- The reviewed implementation checkpoint is pushed to GitHub as `627cda2c36dfab77ffbf7cc74ff363a4198b8c17`.
 
 ## What was checked
 
@@ -16,15 +17,13 @@
 - Browser: `Oceanfront Resort` displayed a clear no-results message.
 - Browser console: no warnings or errors during the checked success flow.
 - Documentation: required report headings and project-context files are present.
+- Student review: the student confirmed the files looked good on September 11, 2026.
 
 ## Remaining limitations
 
 - Only Part 1 hotel search is implemented.
 - SQLite and booking create, read, cancel, and delete behavior are not implemented.
-- The student confirmed the files looked good on September 11, 2026.
-- This folder is not currently a Git repository, so there is no Part 1 commit yet.
-- `report.md` still needs the exact Part 1 commit and final GitHub links.
 
 ## Next task
 
-Create and push the accepted Part 1 checkpoint, then update `report.md` with the exact commit and links to the submitted GitHub revision. Keep Part 2 out of scope until it is authorized.
+Upload `report.md` to the Part 1 submission. Begin Part 2 on a feature branch only after Part 1 is submitted and Part 2 work is authorized.
