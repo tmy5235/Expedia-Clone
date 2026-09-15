@@ -1,17 +1,26 @@
 # Expedia Clone Design
 
-Expedia Clone uses the same frontend/backend separation as Hello Agent. This design describes the implemented Part 1 hotel search.
+Expedia Clone keeps a clear boundary between the Vue interface, FastAPI routes,
+and SQLite-backed Python services.
 
 ## Responsibilities
 
 | Area | Responsibility |
 | --- | --- |
-| Vue frontend | Collect a hotel-name search and display available stays in a plain table. Show loading, empty, and error states. |
-| FastAPI | Define the HTTP routes, validate requests, call backend services, and return clear JSON responses and status codes. |
-| Python backend | Read `hotels.csv` and `trips.csv`, match hotel names, join records by `hotel_id`, and calculate nights and stay totals. |
+| Vue frontend | Collect hotel-name searches and traveler choices; display stays and saved booking history; send create, cancel, and delete requests; show loading, empty, success, confirmation, and error states. |
+| FastAPI | Validate query, path, and request-body IDs; expose stay, traveler, and booking routes; return saved results and clear status codes. |
+| Python backend | Seed the four supplied CSV files once, enable foreign keys, query joined SQLite records, calculate stay totals, and commit booking changes. |
 
 ## Data flow
 
-For CSV search, Vue sends a hotel query to FastAPI. The backend reads `hotels.csv` and `trips.csv`, joins them with `hotel_id`, and returns matching stays for the results table.
+The first database startup creates hotel, trip, user, and booking tables in one
+transaction and imports the fictional starter records. A schema version marker
+prevents later starts from importing them again. After that seed, every
+application read and write uses SQLite.
 
-Part 2 will add SQLite and simulated booking CRUD after the Part 1 checkpoint is reviewed and preserved. All supplied hotel data is fictional.
+Vue sends a hotel query to FastAPI, which joins hotels and trips in SQLite. A
+booking request connects the selected traveler to a trip and receives a
+new unique ID. History joins all four tables. Cancellation updates the status
+to `cancelled`; deletion removes only the identified booking owned by the
+selected traveler. The interface uses standard booking terminology; all
+supplied records remain fictional classroom data.

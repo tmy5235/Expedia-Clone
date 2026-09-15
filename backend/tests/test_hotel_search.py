@@ -4,10 +4,13 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.hotel_search import HotelDataError, search_hotel_stays
-from app.main import app
+from app.main import create_app
 
 
-client = TestClient(app)
+@pytest.fixture
+def client(tmp_path: Path):
+    with TestClient(create_app(tmp_path / "test.sqlite3")) as test_client:
+        yield test_client
 
 
 def test_search_returns_every_stay_for_matching_hotel() -> None:
@@ -49,28 +52,28 @@ def test_search_reports_missing_data_file(tmp_path: Path) -> None:
         search_hotel_stays("Harbor", tmp_path)
 
 
-def test_stays_endpoint_returns_joined_results() -> None:
+def test_stays_endpoint_returns_joined_results(client: TestClient) -> None:
     response = client.get("/api/stays", params={"hotel_name": "Harbor Lantern"})
 
     assert response.status_code == 200
     assert [stay["trip_id"] for stay in response.json()] == ["T001", "T009"]
 
 
-def test_stays_endpoint_returns_empty_result() -> None:
+def test_stays_endpoint_returns_empty_result(client: TestClient) -> None:
     response = client.get("/api/stays", params={"hotel_name": "Oceanfront Resort"})
 
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_stays_endpoint_rejects_blank_query() -> None:
+def test_stays_endpoint_rejects_blank_query(client: TestClient) -> None:
     response = client.get("/api/stays", params={"hotel_name": "   "})
 
     assert response.status_code == 422
     assert response.json() == {"detail": "Enter a hotel name."}
 
 
-def test_health_endpoint_responds() -> None:
+def test_health_endpoint_responds(client: TestClient) -> None:
     response = client.get("/health")
 
     assert response.status_code == 200

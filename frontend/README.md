@@ -1,28 +1,33 @@
-# expedia-clone frontend
+# Expedia Clone Frontend
 
-Vue 3 Composition API with `<script setup>`, built with Vite. Part 1 hotel search is implemented; see [design](../docs/design.md).
+This Vue 3 interface uses the Composition API with `<script setup>` and Vite.
+It provides the complete Part 2 hotel search and booking workflow while FastAPI
+and SQLite own all persistent data.
 
 ## Responsibilities
 
-- Part 1: accessible hotel-name input and Search button; plain labeled table with one row per offered stay; loading, no-results, and request-error states.
-- Part 2, not yet implemented: simulated booking creation, history, cancellation, and deletion.
-- Use backend IDs, fixed offered dates, statuses, and supplied amounts. Inputs/selections are temporary UI state; persistent records belong in SQLite behind FastAPI.
-- Keep a readable layout on phone and desktop with keyboard focus and table headers. Images and elaborate mobile navigation are optional.
+- Search for full or partial hotel names and display matching stays in a labeled table.
+- Select a traveler and read that traveler's booking history from FastAPI.
+- Create a booking from a search result, cancel it while retaining the history row, and delete a test booking after confirmation.
+- Present clear loading, empty, success, validation, and request-error states.
+- Keep only temporary interface state in Vue; never treat frontend state as persistent storage.
+- Remain readable on phone and desktop with keyboard focus and accessible table headings.
 
-Source belongs in `src/`; planned travel HTTP helpers belong in `src/api/`. Use focused components/composables where useful. Add tests for changed behavior and browser checks for rendered search and each CRUD action. Rename the starter UI/package labels to `expedia-clone` during implementation, keeping package metadata/lockfile consistent without dependency upgrades.
+The interface uses standard traveler and booking terminology. The underlying
+records are the fictional course data described in
+[`expedia-clone-data/README.md`](../expedia-clone-data/README.md).
 
 ## Commands
 
-From `frontend/` with existing dependencies:
+From `frontend/` with the existing dependencies:
 
 ```bash
 npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 npm test
-./node_modules/.bin/oxlint .
-./node_modules/.bin/eslint .
+npm run lint
 npm run build
 ```
 
-Use `npm ci` only for a needed, authorized setup; follow CHECK → TAKE ACTION → VERIFY. See [root setup](../README.md) for the declared Node version and backend startup. Existing `npm run lint` enables automatic fixes, so use the direct commands above for read-only verification.
-
-Vite proxies `/api` to `http://127.0.0.1:8000`. Both services are required for integration checks. See [verification](../docs/verification.md).
+Vite proxies `/api` to `http://127.0.0.1:8000`, so both services must be
+running for browser checks. See the [root setup](../README.md),
+[design note](../docs/design.md), and [verification guide](../docs/verification.md).

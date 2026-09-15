@@ -28,9 +28,18 @@ Before starting either service, confirm its port is available. Never stop a proc
 
 - Search for a hotel from the supplied CSV data and confirm its available stays appear.
 - Search for a hotel that does not exist and confirm a clear no-results message appears.
-- After booking CRUD is implemented, create and read a booking through the frontend.
+- Select Traveler 6, confirm its seeded history is empty, then create and read a booking through the frontend.
 - Cancel a booking and confirm the record remains with a cancelled status.
-- Delete a test booking and confirm it is removed.
+- Create a second test booking, delete it after the in-page confirmation, and confirm it is removed.
 - Refresh and restart both services with the same database, then confirm saved changes remain and starter records are not duplicated.
 
-Part 1 search checks are available. Booking CRUD and persistence checks remain unavailable until Part 2 is implemented.
+For an isolated manual run, set `EXPEDIA_DB_PATH` to a path under `/tmp` before
+starting FastAPI. Do not use the normal application database for destructive
+verification.
+
+## Part 2 evidence
+
+- [Hotel search and empty history](screenshots/part2-search-results.png)
+- [Two created bookings in history](screenshots/part2-booking-confirmation.png)
+- [Cancelled booking retained in history](screenshots/part2-booking-cancellation.png)
+- [Deleted booking removed from history](screenshots/part2-delete-booking.png)

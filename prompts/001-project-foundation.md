@@ -6,4 +6,6 @@
 
 ## Result
 
-The project keeps separate `frontend/` and `backend/` folders. The Hello Agent calculator was replaced with the Part 1 CSV hotel search, while the documentation records SQLite booking CRUD as the later Part 2 scope.
+The project keeps separate `frontend/` and `backend/` folders. The Hello Agent
+calculator was replaced with the Part 1 CSV hotel search, and Part 2 later added
+persistent SQLite booking CRUD without changing that separation.
