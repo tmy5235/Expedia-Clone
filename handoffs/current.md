@@ -3,6 +3,7 @@
 ## What works
 
 - Part 2 is complete and student-approved on `codex/part-2-sqlite-crud`.
+- The reviewed implementation checkpoint is `e392a6667b354d56cb69f30d1145e111702d7dd9`.
 - SQLite seeds all four supplied CSVs once; API search, travelers, and booking CRUD use the saved database thereafter.
 - Vue offers traveler selection, booking creation, history, cancellation, and confirmed deletion using standard customer-facing terminology.
 - The Part 1 checkpoint remains `627cda2c36dfab77ffbf7cc74ff363a4198b8c17`.
@@ -23,9 +24,9 @@
 
 ## Remaining limitations
 
-- The final commit, merge to `main`, push, and Part 2 report commit link are pending completion.
+- The report now links the exact Part 2 implementation checkpoint; its documentation commit, merge to `main`, final combined verification, and push are pending completion.
 - Fictional course data only; no authentication, payments, or real reservations.
 
 ## Next task
 
-Create the reviewed Part 2 commit, update the report with its exact commit, merge it to `main`, run the combined verification, and push.
+Commit the exact checkpoint link, merge the reviewed branch to `main`, run the combined verification, and push.

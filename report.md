@@ -4,7 +4,8 @@
 
 Repository URL: <https://github.com/tmy5235/Expedia-Clone>
 
-Exact Part 2 commit: pending student review and the final merge to `main`.
+Exact Part 2 implementation checkpoint:
+[`e392a6667b354d56cb69f30d1145e111702d7dd9`](https://github.com/tmy5235/Expedia-Clone/commit/e392a6667b354d56cb69f30d1145e111702d7dd9)
 
 Preserved Part 1 checkpoint:
 [`627cda2c36dfab77ffbf7cc74ff363a4198b8c17`](https://github.com/tmy5235/Expedia-Clone/commit/627cda2c36dfab77ffbf7cc74ff363a4198b8c17)
@@ -66,5 +67,5 @@ and [current handoff](https://github.com/tmy5235/Expedia-Clone/blob/main/handoff
 
 Remaining limitations: the application uses only fictional classroom records;
 it has no authentication, payments, room inventory, or connection to a live
-reservation service. The next task is commit identification, merge to `main`,
-combined verification, and push.
+reservation service. The next task is the final merge to `main`, combined
+verification, and push.
