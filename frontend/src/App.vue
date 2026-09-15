@@ -1,7 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import BookingHistory from './components/BookingHistory.vue'
+import { useBookings } from './composables/useBookings.js'
 
 import { searchStays } from './api/stays'
+
+const {
+  users, userId, bookings, busy, historyLoading, historyError, actionError, message,
+  initialize, loadHistory, selectTraveler, book, cancel, remove,
+} = useBookings()
+onMounted(initialize)
 
 const hotelName = ref('')
 const searchedName = ref('')
@@ -28,6 +36,10 @@ function formatCurrency(cents) {
 
 function formatDate(value) {
   return dateFormatter.format(new Date(`${value}T00:00:00`))
+}
+
+function formatTravelerName(value) {
+  return value.replace(/^Demo\s+/i, '')
 }
 
 async function submitSearch() {
@@ -60,7 +72,20 @@ async function submitSearch() {
 <template>
   <main>
     <h1>Expedia Clone</h1>
-    <p>Search for available stays by hotel name.</p>
+    <p>Search for available stays by hotel name and manage your bookings.</p>
+
+    <section aria-labelledby="traveler-heading">
+      <h2 id="traveler-heading">Traveler</h2>
+      <label for="traveler">Select a traveler</label>
+      <select id="traveler" v-model="userId" :disabled="busy || historyLoading" @change="selectTraveler">
+        <option value="" disabled>Select a traveler</option>
+        <option v-for="user in users" :key="user.user_id" :value="user.user_id">{{ formatTravelerName(user.display_name) }}</option>
+      </select>
+      <button v-if="users.length === 0 && !busy" @click="initialize">Reload travelers</button>
+      <p v-if="busy" role="status">Saving or loading booking data…</p>
+      <p v-if="actionError" class="error" role="alert">{{ actionError }}</p>
+      <p v-if="message" role="status">{{ message }}</p>
+    </section>
 
     <form @submit.prevent="submitSearch">
       <label for="hotel-name">Hotel name</label>
@@ -109,6 +134,7 @@ async function submitSearch() {
                 <th scope="col">Nights</th>
                 <th scope="col">Nightly rate</th>
                 <th scope="col">Total</th>
+                <th scope="col">Booking</th>
               </tr>
             </thead>
             <tbody>
@@ -121,16 +147,28 @@ async function submitSearch() {
                 <td>{{ stay.nights }}</td>
                 <td>{{ formatCurrency(stay.nightly_rate_cents) }}</td>
                 <td>{{ formatCurrency(stay.total_cents) }}</td>
+                <td><button :disabled="busy || historyLoading || !userId" :aria-label="`Book stay ${stay.trip_id}`" @click="book(stay.trip_id)">Book stay</button></td>
               </tr>
             </tbody>
           </table>
         </div>
       </template>
     </section>
+    <BookingHistory
+      v-if="userId"
+      :key="userId"
+      :bookings="bookings"
+      :busy="busy"
+      :loading="historyLoading"
+      :error="historyError"
+      @refresh="loadHistory"
+      @cancel="cancel"
+      @remove="remove"
+    />
   </main>
 </template>
 
-<style scoped>
+<style>
 main {
   width: min(100% - 2rem, 72rem);
   margin: 0 auto;
@@ -168,7 +206,7 @@ label {
   gap: 0.5rem;
 }
 
-input {
+input, select {
   width: 100%;
   min-width: 0;
   padding: 0.7rem;
@@ -192,6 +230,7 @@ button:disabled {
 }
 
 input:focus-visible,
+select:focus-visible,
 button:focus-visible {
   outline: 3px solid #8bb8ff;
   outline-offset: 2px;
@@ -239,6 +278,12 @@ th {
   background: #eee;
   font-weight: 700;
 }
+
+select { max-width: 28rem; font: inherit; }
+.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.booking-id { overflow-wrap: anywhere; min-width: 9rem; max-width: 13rem; }
+.delete-confirmation { min-width: 15rem; margin-top: 0.75rem; }
+.delete-confirmation button { margin: 0.25rem; }
 
 @media (max-width: 35rem) {
   main {

@@ -2,7 +2,7 @@
 
 Expedia Clone is a small full-stack travel application built from the Hello Agent project structure. A FastAPI backend owns hotel search, booking rules, and stored data, while a Vue frontend owns user input and presentation.
 
-The application uses fictional classroom data and simulated bookings. It does not connect to Expedia, process payments, or create real reservations.
+The application uses fictional classroom data and local booking records. It does not connect to Expedia, process payments, or create real reservations.
 
 ## Project structure
 
@@ -15,7 +15,7 @@ expedia-clone/
 ├── handoffs/              # Current project status
 ├── prompts/               # Selected project instructions
 ├── AGENTS.md              # Project rules for coding agents
-├── report.md              # Part 1 submission report
+├── report.md              # Current Part 2 submission report draft
 └── README.md
 ```
 
@@ -40,6 +40,12 @@ cd backend
 .venv/bin/python -m pytest
 ```
 
+On first startup, the backend creates `backend/data/expedia.sqlite3` and imports
+the supplied hotel, trip, traveler, and booking CSV records. Later starts
+reuse that database, so created, cancelled, and deleted bookings persist. Set
+`EXPEDIA_DB_PATH` to use a different database location, such as an isolated
+database for manual verification.
+
 ### Frontend
 
 ```bash
@@ -61,6 +67,14 @@ npm run build
 
 ## Application behavior
 
-Part 1 is implemented. It reads `hotels.csv` and `trips.csv`, connects their records by `hotel_id`, and displays matching hotel stays in the frontend. Search is case-insensitive and accepts a full or partial hotel name.
+The completed Part 1 checkpoint reads `hotels.csv` and `trips.csv`, connects
+their records by `hotel_id`, and displays matching hotel stays. Part 2 keeps the
+same case-insensitive, partial-name search while moving application reads to
+SQLite after the one-time seed.
 
-Part 2 is not implemented. It will import the supplied hotel, trip, user, and booking records into SQLite and add booking CRUD after Part 1 is reviewed.
+Select a traveler to create a booking from a search result. The booking history
+comes from FastAPI and supports reading saved records, changing a confirmed
+booking to cancelled while retaining it, and permanently deleting a test
+booking after an in-page confirmation. The customer-facing interface uses
+normal traveler and booking terminology while the project continues to use the
+supplied fictional classroom records.

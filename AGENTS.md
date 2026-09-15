@@ -26,7 +26,7 @@
 - Place application source under `frontend/src/`.
 - Keep components focused and extract shared behavior into composables when appropriate.
 - Provide clear loading, empty, validation, and error states.
-- Clearly label bookings as simulated.
+- Use standard traveler and booking language in the interface while keeping all records fictional and local.
 - Read search results and booking history from the backend. Do not use local frontend state as persistent storage.
 - Support booking creation, history, cancellation, and deletion through the frontend.
 - Add or update tests whenever frontend behavior changes.
