@@ -15,7 +15,7 @@ expedia-clone/
 ├── handoffs/              # Current project status
 ├── prompts/               # Selected project instructions
 ├── AGENTS.md              # Project rules for coding agents
-├── report.md              # Current Part 2 submission report draft
+├── report.md              # Part 2 submission report
 └── README.md
 ```
 
