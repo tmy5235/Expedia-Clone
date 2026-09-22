@@ -1,33 +1,44 @@
 # Current Handoff
 
-## What works
+## Submission revision
 
-- Part 2 is complete, student-approved, and merged into `main` from `codex/part-2-sqlite-crud`.
-- The reviewed implementation checkpoint is `e392a6667b354d56cb69f30d1145e111702d7dd9`.
-- The reviewed merge commit is `4daf427a8fd9d5c632d6144b4f34b03120784cd0`.
-- SQLite seeds all four supplied CSVs once; API search, travelers, and booking CRUD use the saved database thereafter.
-- Vue offers traveler selection, booking creation, history, cancellation, and confirmed deletion using standard customer-facing terminology.
-- The Part 1 checkpoint remains `627cda2c36dfab77ffbf7cc74ff363a4198b8c17`.
+- Submission branch: `main`; development branch retained as `codex/part-2-accounts-pricing`.
+- Implementation checkpoint: `5b4e1161620ea2dec398293152d9e0148be3a82f`. Final report and handoff are recorded in the following documentation commit.
+- The user authorized committing and pushing after the documentation checkpoint. Course upload remains the user’s action.
+- Prior Part 2 merge: `4daf427a8fd9d5c632d6144b4f34b03120784cd0`; prior implementation: `e392a6667b354d56cb69f30d1145e111702d7dd9`.
+- Part 1 checkpoint: `627cda2c36dfab77ffbf7cc74ff363a4198b8c17`.
 
-## What was checked
+## Implemented
 
-- Existing Python environment: SQLite 3.50.4; save/close/reopen/read passed without installing dependencies.
-- Backend: 17 tests passed using temporary databases, including restart persistence, one-time seeding, validation, foreign keys, and rollback.
-- Frontend: 9 tests, Oxlint, ESLint, and production build passed.
-- Combined verification was rerun successfully on `main` after the feature-branch merge.
-- Browser: Traveler 6 began with empty history; a T001 booking was created and read, survived refresh, and remained after cancellation with `cancelled` status.
-- Browser: a second T009 test booking was created and deleted after confirmation; it stayed absent after both services restarted.
-- Persistence: after restart, SQLite still contained 8 hotels, 12 trips, 6 users, and 7 bookings (6 starter records plus the retained cancelled test booking), with no duplicate seed rows.
-- Browser: `Fire` still displayed the clear Part 1 no-results message after restart.
-- Browser: the live interface now shows `Traveler`, `Traveler 1` through `Traveler 6`, `Booking`, and `Booking history`; no customer-facing demo or simulated labels remain.
-- Documentation: the root and frontend READMEs, design note, verification guide, selected prompts, handoff, AGENTS rules, and Part 2 report reflect the completed implementation.
-- Report evidence: four student-provided screenshots under `docs/screenshots/` show search with empty history, two created bookings, cancellation with the record retained, and deletion of only the selected booking.
-- The isolated verification processes were stopped; the normal backend and frontend are currently running for student review.
+- Explicit MVC account, search, urgency, and pricing controllers; SQLite model/data access; Vue views and account/search/booking composables.
+- Atomic schema migration 1 → 2 adds accounts, sessions, shared search history, and saved booking totals without changing IDs or reseeding.
+- Registration, duplicate checks, login/logout, server-side session restoration, signed-in username, and account feedback.
+- Booking CRUD requires the authenticated owner. Booking totals use the selected saved search and persist unchanged.
+- Per-user normalized-query daily counts in America/New_York; searches 1–3 base rate, 4+ × 1.20 once. Hotel base prices remain unchanged.
+- Existing users: traveler1–traveler6 / classroom-demo (fictional only).
+- Installed DB Browser for SQLite 3.13.1 with permission, launched it, and opened the isolated verification database.
+- All 15 project-owned Markdown files audited and updated where needed: AGENTS, root/frontend/data READMEs, design, verification, all prompt notes, handoff, and report. Historical checkpoints are clearly labeled; standalone report screenshots and supporting documents use permanent GitHub links.
 
-## Remaining limitations
+## Verified
 
-- Fictional course data only; no authentication, payments, or real reservations.
+- Backend 28 tests passed; one existing third-party FastAPI TestClient deprecation warning. No dependency upgrades.
+- Frontend 14 tests, Oxlint, ESLint, and production build passed.
+- Browser registration, duplicate error, incorrect password, login/logout, normalized queries, independent query/user counts, exact $100 → $120 threshold and no compounding.
+- Browser create/read/cancel/delete at returned prices, refresh, and restart of both services with the same database passed.
+- After restart, user A's matching query count continued at six; cancelled $240 booking retained, deleted test booking absent, H008 stored base still 10000 cents, valid foreign keys.
+- Next-day/DST boundary behavior verified with injected clocks in automated tests.
+- Screenshots: `docs/screenshots/part2-accounts-pricing.png` (sixth search and retained booking) and `docs/screenshots/part2-personalized-price.png` (seventh search still $120).
 
-## Next task
+## Verification environment
 
-Upload `report.md` to the Part 2 submission page and submit the assignment.
+- Isolated DB: `/tmp/expedia-accounts-verification-20260922.sqlite3`.
+- Browser-created users: class_user_a and class_user_b / made-up-demo.
+- Test services on 8001/5174 were stopped after verification. Existing services on 8000/5173 were left alone.
+- Existing 8000/5173 processes were not stopped; normal application data was not used for destructive testing.
+- Normal database migrates on next startup of the updated backend.
+
+## Next action
+
+Upload the finalized `report.md` to the Part 2 course submission page. Implementation, documentation/link audit, automated rechecks, browser evidence, and test-service cleanup are complete. The feature branch and `main` carry the submission revision on GitHub. The course upload has not been performed by the agent.
+
+Limitations: fictional local classroom accounts with readable demo passwords and simple sessions; no production authentication, payments, or real reservations.
