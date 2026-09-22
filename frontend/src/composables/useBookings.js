@@ -1,8 +1,7 @@
 import { ref } from 'vue'
-import { getUsers, getBookings, createBooking, cancelBooking, deleteBooking } from '../api/bookings.js'
+import { getBookings, createBooking, cancelBooking, deleteBooking } from '../api/bookings.js'
 
 export function useBookings() {
-  const users = ref([])
   const userId = ref('')
   const bookings = ref([])
   const busy = ref(false)
@@ -16,7 +15,7 @@ export function useBookings() {
     const request = ++historyRequest
     bookings.value = []
     historyError.value = ''
-    if (!userId.value) return
+    if (!userId.value) { historyLoading.value = false; return }
     historyLoading.value = true
     try {
       const data = await getBookings(userId.value)
@@ -25,20 +24,6 @@ export function useBookings() {
       if (request === historyRequest) historyError.value = error.message
     } finally {
       if (request === historyRequest) historyLoading.value = false
-    }
-  }
-
-  async function initialize() {
-    busy.value = true
-    actionError.value = ''
-    try {
-      users.value = await getUsers()
-      userId.value = users.value[0]?.user_id || ''
-      await loadHistory()
-    } catch (error) {
-      actionError.value = error.message
-    } finally {
-      busy.value = false
     }
   }
 
@@ -53,7 +38,7 @@ export function useBookings() {
     message.value = ''
     actionError.value = ''
     if (!userId.value) {
-      actionError.value = 'Select a traveler first.'
+      actionError.value = 'Log in to book a stay.'
       return
     }
     busy.value = true
@@ -69,9 +54,9 @@ export function useBookings() {
   }
 
   return {
-    users, userId, bookings, busy, historyLoading, historyError, actionError, message,
-    initialize, loadHistory, selectTraveler,
-    book: (tripId) => mutate(() => createBooking(userId.value, tripId), 'Booking saved. View it in booking history.'),
+    userId, bookings, busy, historyLoading, historyError, actionError, message,
+    loadHistory, selectTraveler,
+    book: (stay) => mutate(() => createBooking(userId.value, stay.trip_id, stay.search_id), 'Booking saved. View it in booking history.'),
     cancel: (bookingId) => mutate(() => cancelBooking(bookingId, userId.value), 'Booking cancelled. The record remains in history.'),
     remove: (bookingId) => mutate(() => deleteBooking(bookingId, userId.value), 'Booking deleted.'),
   }

@@ -7,7 +7,7 @@ and SQLite own all persistent data.
 ## Responsibilities
 
 - Search for full or partial hotel names and display matching stays in a labeled table.
-- Select a traveler and read that traveler's booking history from FastAPI.
+- Create an account, log in/out, restore the server session, and read the signed-in traveler's history from FastAPI.
 - Create a booking from a search result, cancel it while retaining the history row, and delete a test booking after confirmation.
 - Present clear loading, empty, success, validation, and request-error states.
 - Keep only temporary interface state in Vue; never treat frontend state as persistent storage.
@@ -31,3 +31,7 @@ npm run build
 Vite proxies `/api` to `http://127.0.0.1:8000`, so both services must be
 running for browser checks. See the [root setup](../README.md),
 [design note](../docs/design.md), and [verification guide](../docs/verification.md).
+
+Search rates and daily counts come from the backend. `useSearch` clears stale responses when accounts change; `useAccount` coordinates authentication; `useBookings` coordinates saved booking actions. Set `EXPEDIA_API_TARGET` to use a different backend during isolated tests.
+
+The daily rule uses `America/New_York`: the first three same-user, normalized-query searches return base price; the fourth and later return base × 1.20 once. The booking request includes the returned search ID so the backend can verify ownership and save the accepted total. Logging out clears account results and history.

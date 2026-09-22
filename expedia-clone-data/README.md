@@ -1,4 +1,4 @@
-# Expedia Lite: Sample Data
+# Expedia Clone: Sample Data and SQLite Model
 
 These four CSV files contain fictional classroom data for a small travel application. All hotel names, travelers, bookings, and prices are invented. City names are real. The files do not describe live hotel availability or real reservations.
 
@@ -13,9 +13,40 @@ These four CSV files contain fictional classroom data for a small travel applica
 
 For Part 1, the Python backend reads the supplied CSV files. The Vue frontend sends a search request through the FastAPI routes, and displays matching trips in a plain table. Hotel and trip information are connected by `hotel_id`. The sample users and bookings support the later booking and history work.
 
-In this simplified model, a **trip is a hotel stay**. Each trip names one hotel and a check-in/check-out date. Flights, room inventory, authentication, payments, taxes, and fees are outside the data model. Each trip has a fixed nightly price from its hotel. The same hotel may appear in several trips with different dates.
+In this simplified model, a **trip is a hotel stay**. Each trip names one hotel and a check-in/check-out date. Flights, room inventory, payments, taxes, and fees are outside the data model. The CSV files have no credentials; Part 2 adds classroom accounts in SQLite. Each trip uses its hotel’s stored base nightly price; signed-in search prices can differ under the rule below. The same hotel may appear in several trips with different dates.
 
 For Part 2, these CSVs become the initial records in SQLite. Changes made in the application should be stored in the database. Restarting the application should preserve those changes. Re-importing the starter files on every startup must not erase new bookings, restore deleted bookings, or duplicate the sample records.
+
+## Part 2 accounts and personalized pricing in SQLite
+
+The supplied CSVs remain unchanged. On first creation, the database imports them
+once, then applies the version-2 migration. An existing version-1 database migrates
+in place without replacing IDs, restoring deleted bookings, or erasing cancellations.
+
+| SQLite model | Additions beyond the supplied CSVs |
+| --- | --- |
+| `users` | Unique normalized username and readable fictional password; existing ID/display name preserved. |
+| `sessions` | Opaque session token linked to `users.user_id`; logout removes it. |
+| `search_history` | One shared table with `search_id`, user reference, normalized query, UTC timestamp, New York calendar date, and submission count. |
+| `bookings` | Saved `total_cents` from the accepted search price; original user/trip references retained. |
+| `hotels` | Stored base rate in integer cents, unchanged by personalized pricing. |
+
+`search_history.user_id` and `sessions.user_id` reference `users.user_id`; these
+new relationships supplement the original CSV diagram below. Vue shows the
+signed-in username and backend prices. Account, search, urgency, and pricing
+controllers coordinate the Model and View; see [MVC design](../docs/design.md).
+
+For each signed-in user and trimmed, casefolded query, count all nonempty
+submissions during the current **America/New_York** calendar day, including the
+current search. Counts 1–3 use base price; counts 4+ use base × 1.20 once.
+Different users, queries, and local dates have independent counts. Anonymous
+searches show base rates without history. The assumption does not prove urgency.
+
+`H008` (Valley Trail Inn, `T008`) supplies the $100/night demonstration: the fourth
+matching search returns $120/night and $240 for two nights while the stored rate
+stays 10000 cents. Accounts, search history, and booking totals survive restart.
+For DB Browser for SQLite setup and read-only inspection queries, see the
+[root README](../README.md) and [verification guide](../docs/verification.md).
 
 ## Open the files in Excel
 
@@ -57,7 +88,7 @@ Each booking has two references: a traveler ID and a trip ID. They connect the t
 | `user_id` | Unique text ID for the demo traveler | `U001` |
 | `display_name` | Fictional label shown in the application | Demo Traveler 1 |
 
-These are demonstration identities, not login accounts. No passwords or personal contact details are provided.
+The CSV contains only demonstration identities, with no passwords or personal contact details. The version-2 SQLite migration preserves `U001`–`U006` and adds usernames `traveler1`–`traveler6`, each with the made-up password `classroom-demo`. New accounts are saved in SQLite, not this CSV.
 
 ### `trips.csv`
 
@@ -85,9 +116,9 @@ Changing a booking’s status to `cancelled` keeps the row for history. Deleting
 
 ## Concrete records to check
 
-The following examples use a city search that ignores capitalization. Ordering of the returned rows is not significant.
+The table below groups supplied records by city for data inspection. It is not an application search specification: the implemented interface searches hotel names, not cities. For example, `Harbor Lantern` returns T001/T009 and `Valley Trail` returns T008. Hotel-name matching ignores capitalization and surrounding spaces.
 
-| City query | Expected trip IDs | Count |
+| City in supplied data | Related trip IDs | Count |
 | --- | --- | --- |
 | `Boston` or `boston` | `T001`, `T002`, `T009`, `T010` | 4 |
 | `New York` | `T003`, `T004`, `T011` | 3 |
@@ -96,9 +127,9 @@ The following examples use a city search that ignores capitalization. Ordering o
 | `State College` | `T008` | 1 |
 | `Miami` | No matching rows | 0 |
 
-An empty search field and a city with no results are different situations. The interface should make its handling of both understandable.
+An empty hotel-name search is rejected; a nonempty hotel-name query with no matches shows a no-results message. The latter still counts as a submission for a signed-in user.
 
-For a Boston search, these are the joined values behind a possible plain results table:
+For the Boston records, these joined values show the unchanged base prices:
 
 | Trip ID | Hotel | Check-in | Check-out | Nights | Nightly rate | Stay price |
 | --- | --- | --- | --- | --- | --- | --- |

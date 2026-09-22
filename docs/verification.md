@@ -1,8 +1,8 @@
 # Verification
 
-Run all commands from the `expedia-clone` project unless a step changes directories.
-
 ## Automated checks
+
+Run with the existing dependencies; no upgrades are required:
 
 ```bash
 cd backend
@@ -16,30 +16,85 @@ npm run lint
 npm run build
 ```
 
-## Development services
+Tests use temporary databases. Backend coverage includes migration from version 1,
+one-time seed, rollback, foreign keys, accounts, duplicate/invalid credentials,
+sessions, logout, protected booking CRUD, independent user/query counts,
+normalization, empty results, anonymous/blank searches, concurrent submissions,
+cent rounding, and New York midnight boundaries including DST. Injected clocks
+verify next-day behavior without changing the machine clock.
 
-- Backend: `http://127.0.0.1:8000`
-- Frontend: `http://127.0.0.1:5173`
-- Vite forwards frontend `/api` requests to the backend.
+## Isolated browser run
 
-Before starting either service, confirm its port is available. Never stop a process that was not started for the current verification run.
+Check ports before starting services; never stop unrelated processes. Defaults
+are backend 8000/frontend 5173. The README provides 8001/5174 commands with a
+temporary database and `EXPEDIA_API_TARGET` if defaults are occupied.
 
-## Application checks
+1. Create fictional accounts A and B with a made-up password. Try A again and
+   confirm duplicate feedback. Incorrect username/password must leave you logged out.
+2. Log in as A. Search `Valley Trail` five times, varying capitalization and
+   surrounding spaces. Counts 1, 2, 3 return $100/night ($200 for T008); 4 and 5
+   return $120/night ($240). No compounding.
+3. Book T008 at $240; refresh and confirm the signed-in username and saved total.
+   Cancel it and confirm the row remains cancelled at $240.
+4. Search `Valley`; this different query starts at one with $100/night. Create
+   a second disposable booking and delete it with the in-page confirmation.
+5. Log out. Username, history, and old search results must disappear. Log in
+   as B; its first `Valley Trail` search remains $100 and its history is empty.
+6. Restart both services with the same temporary database. Refresh: B's session
+   survives. Log out/in as A: cancelled booking remains; deleted booking is absent.
+   Submit `Valley Trail` again: count continues at six, $120/night.
+7. Search a nonexistent hotel and verify the no-results message. Blank input
+   shows validation and creates no history.
+8. Log in as `traveler1` / `classroom-demo` and confirm preserved seeded bookings.
+9. Inspect the database using DB Browser for SQLite. Confirm base rate and IDs
+   remain unchanged, no seed duplicates, and valid foreign keys.
+10. Stop only the services created for this verification unless asked to keep them running.
 
-- Search for a hotel from the supplied CSV data and confirm its available stays appear.
-- Search for a hotel that does not exist and confirm a clear no-results message appears.
-- Select Traveler 6, confirm its seeded history is empty, then create and read a booking through the frontend.
-- Cancel a booking and confirm the record remains with a cancelled status.
-- Create a second test booking, delete it after the in-page confirmation, and confirm it is removed.
-- Refresh and restart both services with the same database, then confirm saved changes remain and starter records are not duplicated.
+## Read-only database evidence
 
-For an isolated manual run, set `EXPEDIA_DB_PATH` to a path under `/tmp` before
-starting FastAPI. Do not use the normal application database for destructive
-verification.
+Open the same database in DB Browser for SQLite. Browse `users` and
+`search_history` or use **Execute SQL**:
 
-## Part 2 evidence
+```sql
+SELECT u.user_id, u.username, s.search_id, s.query, s.searched_at,
+       s.search_day, s.search_count
+FROM search_history s JOIN users u USING (user_id)
+ORDER BY s.search_id;
 
-- [Hotel search and empty history](screenshots/part2-search-results.png)
-- [Two created bookings in history](screenshots/part2-booking-confirmation.png)
-- [Cancelled booking retained in history](screenshots/part2-booking-cancellation.png)
-- [Deleted booking removed from history](screenshots/part2-delete-booking.png)
+SELECT hotel_id, hotel_name, nightly_rate_cents
+FROM hotels WHERE hotel_id = 'H008';
+
+SELECT booking_id, user_id, trip_id, status, total_cents FROM bookings;
+PRAGMA foreign_key_check;
+PRAGMA user_version;
+```
+
+Expected H008 rate: `10000` cents. Foreign-key check: no rows. Schema version: 2.
+New account IDs start `U-`; original `U001`–`U006` and their booking references remain.
+A fresh verification run ends with 8 hotels, 12 trips, 8 users (6 supplied + A/B),
+and 7 bookings (6 supplied + the cancelled test booking).
+
+## Latest evidence (September 21, 2026, America/New_York)
+
+- Backend: 28 tests passed; one existing third-party TestClient deprecation warning.
+- Frontend: 14 tests, Oxlint, ESLint, and production build passed.
+- Browser: registration, duplicate rejection, incorrect password, login/logout,
+  $100/$120 threshold, query normalization, independent query/user pricing,
+  create/read/cancel/delete, refresh, and both-service restart all passed.
+- Automated clocks verified next-day resets and DST boundaries.
+- Database: original $100 base rate, valid foreign keys, retained cancelled $240
+  booking, and deleted booking absent after restart.
+- [Screenshot: personalized pricing and cancelled booking after restart](screenshots/part2-accounts-pricing.png).
+- The earlier screenshots document the original traveler-selection UI and are
+  retained as historical Part 2 evidence, not the current account interface.
+
+
+## Submission documentation checkpoint
+
+Audit all project-owned Markdown files, including AGENTS, both application
+READMEs, the supplied-data guide, design/verification, historical prompt notes,
+the handoff, and report. Exclude dependency, environment, cache, build, and Git
+internal files. Keep historical facts labeled and make current accounts, MVC,
+pricing, and persistence descriptions consistent. Validate local links and
+screenshots; use permanent GitHub links in the standalone submission report.
+Run the automated checks above and `git diff --check` before publication.

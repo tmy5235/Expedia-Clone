@@ -72,9 +72,67 @@ their records by `hotel_id`, and displays matching hotel stays. Part 2 keeps the
 same case-insensitive, partial-name search while moving application reads to
 SQLite after the one-time seed.
 
-Select a traveler to create a booking from a search result. The booking history
+Create an account and log in to book a stay from a search result. The booking history
 comes from FastAPI and supports reading saved records, changing a confirmed
 booking to cancelled while retaining it, and permanently deleting a test
 booking after an in-page confirmation. The customer-facing interface uses
 normal traveler and booking terminology while the project continues to use the
 supplied fictional classroom records.
+
+
+## Accounts and personalized pricing (Part 2 extension)
+
+No application dependency installation or upgrade is needed for this extension.
+Start the backend once to apply the additive version-2 migration to an existing
+version-1 database. Existing users, IDs, bookings, cancellations, and deletions
+are preserved. Copy the database as a backup before manually experimenting in a viewer.
+
+Existing fictional travelers can log in as `traveler1` through `traveler6`, each
+with the **made-up classroom password** `classroom-demo`. New usernames use 3–40
+letters, digits, or underscores and are case-insensitive. Create Account saves
+the user, then asks you to log in. Passwords are case-sensitive, stored as readable
+text for this activity, and must be fictional. Email, OAuth, password recovery,
+and production authentication are outside this exercise.
+
+Login is tracked by a server-side SQLite session and an HTTP-only cookie, so a
+browser refresh or app restart retains the account. Logout invalidates the session
+and clears displayed history/results. Bookings can only be managed by their owner.
+Anonymous visitors can search base rates but must log in and search again to book.
+
+Every submitted nonempty search by a signed-in user is saved, including searches
+with no results. Queries are compared after trimming surrounding spaces and
+casefolding. For the same user and normalized query on the same calendar day in
+**America/New_York**, searches 1–3 show base price and searches 4 onward show
+**base price × 1.20**. The current search counts. The increase never compounds or
+updates the stored hotel rate. A different query, user, or calendar day has a
+separate count. Prices round to cents; bookings retain the total accepted from
+the selected search. Repeated searching is an assumed urgency signal, not proof.
+
+Use **Valley Trail Inn** (`H008`, trip `T008`) for the $100 → $120 demonstration.
+The two-night total changes from $200 to $240.
+
+### Database viewer
+
+DB Browser for SQLite was installed locally with permission using Homebrew.
+For another machine, obtain it from [the official download page](https://sqlitebrowser.org/dl/).
+Choose **Open Database** and select `backend/data/expedia.sqlite3` after starting
+the new backend, or use an isolated test database. **Browse Data** shows `users`,
+`search_history`, `hotels`, and `bookings`; **Execute SQL** runs the read-only
+queries in [the verification guide](docs/verification.md). No DB viewer is
+required to run the app.
+
+### Isolated verification ports
+
+If the regular ports are busy, leave their processes running and use:
+
+```bash
+# From backend/
+EXPEDIA_DB_PATH=/tmp/expedia-accounts-test.sqlite3 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+# From frontend/, in another terminal
+EXPEDIA_API_TARGET=http://127.0.0.1:8001 npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
+```
+
+`EXPEDIA_API_TARGET` configures only Vite's development proxy; it defaults to
+`http://127.0.0.1:8000`. `EXPEDIA_DB_PATH` selects the backend database file.
+See [MVC design](docs/design.md), [verification](docs/verification.md), and
+[the updated Part 2 report](report.md).

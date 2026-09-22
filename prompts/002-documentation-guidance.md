@@ -6,4 +6,6 @@
 
 ## Result
 
-The root README and AGENTS files follow the Hello Agent layout. The design note explains component responsibilities, and the handoff records the current implementation, checks, limitations, and next task without repeating the full assignment.
+The root README and AGENTS files follow the Hello Agent layout. The design note explains component responsibilities, and the handoff records the current implementation, checks, limitations, and next task without repeating the full assignment. The current documentation also covers
+MVC accounts, the version-2 migration, America/New_York daily pricing, saved
+booking totals, and the Activity 3 verification evidence in [the report](../report.md).

@@ -2,67 +2,28 @@ from contextlib import asynccontextmanager
 import os
 from pathlib import Path
 import sqlite3
-from typing import Annotated, Literal
+from typing import Annotated, Callable
+from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Path as PathParameter, Query, Response
+from fastapi import Cookie, FastAPI, HTTPException, Path as PathParameter, Query, Response
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field
+from app.schemas import StayResponse, TravelerResponse, BookingResponse, CreateBooking, CancelBooking, Credentials
+from app.controllers.accounts import AccountController
+from app.controllers.search import SearchController
 
 from app.database import Database, RecordNotFound
 
 
-class StayResponse(BaseModel):
-    trip_id: str
-    trip_name: str
-    hotel_id: str
-    hotel_name: str
-    city: str
-    state: str
-    check_in: str
-    check_out: str
-    nights: int
-    nightly_rate_cents: int
-    total_cents: int
+Session = Annotated[str | None, Cookie(alias="expedia_session")]
 
 
-class TravelerResponse(BaseModel):
-    user_id: str
-    display_name: str
-
-
-class BookingResponse(BaseModel):
-    booking_id: str
-    user_id: str
-    trip_id: str
-    booked_on: str
-    status: Literal['confirmed', 'cancelled']
-    display_name: str
-    trip_name: str
-    hotel_name: str
-    check_in: str
-    check_out: str
-    total_cents: int
-
-
-Identifier = Annotated[str, Field(min_length=1, max_length=100, pattern=r"^\S+$")]
-
-
-class CreateBooking(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    user_id: Identifier
-    trip_id: Identifier
-
-
-class CancelBooking(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    user_id: Identifier
-    status: Literal['cancelled']
-
-
-def create_app(database_path: Path | None = None) -> FastAPI:
+def create_app(database_path: Path | None = None, clock: Callable[[], datetime] | None = None) -> FastAPI:
     database = Database(database_path or Path(os.environ.get(
         "EXPEDIA_DB_PATH", Path(__file__).resolve().parents[1] / "data" / "expedia.sqlite3"
     )))
+
+    accounts = AccountController(database)
+    searches = SearchController(database, clock)
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
@@ -83,10 +44,33 @@ def create_app(database_path: Path | None = None) -> FastAPI:
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @application.post("/api/accounts", response_model=TravelerResponse, status_code=201)
+    def create_account(credentials: Credentials) -> dict:
+        return accounts.create(credentials.username, credentials.password)
+
+    @application.post("/api/login", response_model=TravelerResponse)
+    def login(credentials: Credentials, response: Response, session: Session = None) -> dict:
+        user, token = accounts.login(credentials.username, credentials.password, session)
+        response.set_cookie("expedia_session", token, httponly=True, samesite="strict", max_age=604800)
+        return user
+
+    @application.get("/api/session", response_model=TravelerResponse | None)
+    def current_user(session: Session = None) -> dict | None:
+        return accounts.current(session)
+
+    @application.post("/api/logout", status_code=204)
+    def logout(response: Response, session: Session = None) -> Response:
+        database.delete_session(session)
+        response.delete_cookie("expedia_session")
+        response.status_code = 204
+        return response
+
     @application.get("/api/stays", response_model=list[StayResponse])
-    def get_stays(hotel_name: Annotated[str, Query(min_length=1, max_length=100)]) -> list[dict]:
+    def get_stays(hotel_name: Annotated[str, Query(min_length=1, max_length=100)],
+                  response: Response, session: Session = None) -> list[dict]:
         try:
-            return database.search(hotel_name)
+            response.headers["Cache-Control"] = "no-store"
+            return searches.submit(hotel_name, accounts.current(session))
         except ValueError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
@@ -99,12 +83,16 @@ def create_app(database_path: Path | None = None) -> FastAPI:
         user_id: Annotated[
             str, Query(min_length=1, max_length=100, pattern=r"^\S+$")
         ],
+        session: Session = None,
     ) -> list[dict]:
+        accounts.require(session, user_id)
         return database.history(user_id)
 
     @application.post("/api/bookings", response_model=BookingResponse, status_code=201)
-    def create_booking(booking: CreateBooking) -> dict:
-        return database.create_booking(booking.user_id, booking.trip_id)
+    def create_booking(booking: CreateBooking, session: Session = None) -> dict:
+        accounts.require(session, booking.user_id)
+        total = searches.booking_total(booking.user_id, booking.trip_id, booking.search_id)
+        return database.create_booking(booking.user_id, booking.trip_id, total)
 
     @application.patch("/api/bookings/{booking_id}", response_model=BookingResponse)
     def cancel_booking(
@@ -112,7 +100,9 @@ def create_app(database_path: Path | None = None) -> FastAPI:
             str, PathParameter(min_length=1, max_length=100, pattern=r"^\S+$")
         ],
         booking: CancelBooking,
+        session: Session = None,
     ) -> dict:
+        accounts.require(session, booking.user_id)
         return database.cancel_booking(booking_id, booking.user_id)
 
     @application.delete("/api/bookings/{booking_id}", status_code=204)
@@ -123,7 +113,9 @@ def create_app(database_path: Path | None = None) -> FastAPI:
         user_id: Annotated[
             str, Query(min_length=1, max_length=100, pattern=r"^\S+$")
         ],
+        session: Session = None,
     ) -> Response:
+        accounts.require(session, user_id)
         database.delete_booking(booking_id, user_id)
         return Response(status_code=204)
 

@@ -8,6 +8,7 @@ from typing import Iterator
 from uuid import uuid4
 
 from app.hotel_search import DATA_DIRECTORY, _read_csv
+from app.migrations import migrate_accounts
 
 
 class RecordNotFound(ValueError):
@@ -24,9 +25,7 @@ STAY_SELECT = """
     FROM trips t JOIN hotels h ON h.hotel_id = t.hotel_id
 """
 BOOKING_SELECT = """
-    SELECT b.*, u.display_name, t.trip_name, t.check_in, t.check_out, h.hotel_name,
-           CAST(julianday(t.check_out) - julianday(t.check_in) AS INTEGER)
-               * h.nightly_rate_cents AS total_cents
+    SELECT b.*, u.display_name, t.trip_name, t.check_in, t.check_out, h.hotel_name
     FROM bookings b JOIN users u ON u.user_id = b.user_id
     JOIN trips t ON t.trip_id = b.trip_id JOIN hotels h ON h.hotel_id = t.hotel_id
 """
@@ -53,8 +52,14 @@ class Database:
         with self.connect() as db:
             # Lock before checking the marker so simultaneous starts cannot seed twice.
             db.execute("BEGIN IMMEDIATE")
-            if db.execute("PRAGMA user_version").fetchone()[0] == 1:
+            version = db.execute("PRAGMA user_version").fetchone()[0]
+            if version == 2:
                 return
+            if version == 1:
+                migrate_accounts(db)
+                return
+            if version != 0:
+                raise RuntimeError("Unsupported database schema version.")
             for statement in (
                 """CREATE TABLE hotels (
                     hotel_id TEXT PRIMARY KEY, hotel_name TEXT NOT NULL,
@@ -88,6 +93,7 @@ class Database:
                 db.executemany(f"INSERT INTO {table} VALUES ({placeholders})",
                                [tuple(row[column] for column in columns) for row in rows])
             db.execute("PRAGMA user_version = 1")
+            migrate_accounts(db)
 
     def search(self, hotel_name: str) -> list[dict]:
         query = hotel_name.strip()
@@ -102,7 +108,7 @@ class Database:
 
     def users(self) -> list[dict]:
         with self.connect() as db:
-            return [dict(row) for row in db.execute("SELECT * FROM users ORDER BY user_id")]
+            return [dict(row) for row in db.execute("SELECT user_id, display_name, username FROM users ORDER BY user_id")]
 
     @staticmethod
     def require_user(db: sqlite3.Connection, user_id: str) -> None:
@@ -117,14 +123,16 @@ class Database:
                 (user_id,),
             )]
 
-    def create_booking(self, user_id: str, trip_id: str) -> dict:
+    def create_booking(self, user_id: str, trip_id: str, total_cents: int | None = None) -> dict:
         with self.connect() as db:
             self.require_user(db, user_id)
             if db.execute("SELECT 1 FROM trips WHERE trip_id = ?", (trip_id,)).fetchone() is None:
                 raise RecordNotFound("Stay not found.")
             booking_id = f"B-{uuid4().hex}"
-            db.execute("INSERT INTO bookings VALUES (?, ?, ?, ?, 'confirmed')",
-                       (booking_id, user_id, trip_id, date.today().isoformat()))
+            if total_cents is None:
+                total_cents = db.execute(STAY_SELECT + " WHERE t.trip_id = ?", (trip_id,)).fetchone()["total_cents"]
+            db.execute("INSERT INTO bookings VALUES (?, ?, ?, ?, 'confirmed', ?)",
+                       (booking_id, user_id, trip_id, date.today().isoformat(), total_cents))
             booking = dict(db.execute(BOOKING_SELECT + " WHERE b.booking_id = ?", (booking_id,)).fetchone())
         return booking
 
@@ -145,3 +153,55 @@ class Database:
                                 (booking_id, user_id))
             if result.rowcount != 1:
                 raise RecordNotFound("Booking not found for this traveler.")
+
+    def create_account(self, username: str, password: str) -> dict:
+        user_id = f"U-{uuid4().hex}"
+        with self.connect() as db:
+            try:
+                db.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
+                           (user_id, username, username, password))
+            except sqlite3.IntegrityError as error:
+                if db.execute("SELECT 1 FROM users WHERE username = ?", (username,)).fetchone():
+                    raise ValueError("That username is already taken.") from error
+                raise
+        return {"user_id": user_id, "username": username, "display_name": username}
+
+    def credentials(self, username: str) -> dict | None:
+        with self.connect() as db:
+            row = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+            return dict(row) if row else None
+
+    def save_session(self, token: str, user_id: str, old_token: str | None) -> None:
+        with self.connect() as db:
+            db.execute("DELETE FROM sessions WHERE token = ?", (old_token,))
+            db.execute("INSERT INTO sessions VALUES (?, ?)", (token, user_id))
+
+    def session_user(self, token: str | None) -> dict | None:
+        with self.connect() as db:
+            row = db.execute("""SELECT u.user_id, u.username, u.display_name FROM users u
+                JOIN sessions s ON s.user_id = u.user_id WHERE s.token = ?""", (token,)).fetchone()
+            return dict(row) if row else None
+
+    def delete_session(self, token: str | None) -> None:
+        with self.connect() as db:
+            db.execute("DELETE FROM sessions WHERE token = ?", (token,))
+
+    def record_search(self, user_id: str, query: str, timestamp: str, day: str) -> dict:
+        with self.connect() as db:
+            # Serialize count + insert so concurrent submissions each get their own count.
+            db.execute("BEGIN IMMEDIATE")
+            count = db.execute("""SELECT COUNT(*) FROM search_history
+                WHERE user_id = ? AND query = ? AND search_day = ?""", (user_id, query, day)).fetchone()[0] + 1
+            cursor = db.execute("""INSERT INTO search_history
+                (user_id, query, searched_at, search_day, search_count) VALUES (?, ?, ?, ?, ?)""",
+                (user_id, query, timestamp, day, count))
+            result = {"search_id": cursor.lastrowid, "search_count": count}
+        return result
+
+    def saved_search(self, user_id: str, search_id: int) -> dict:
+        with self.connect() as db:
+            row = db.execute("SELECT * FROM search_history WHERE search_id = ? AND user_id = ?",
+                             (search_id, user_id)).fetchone()
+            if row is None:
+                raise RecordNotFound("Search not found for this traveler.")
+            return dict(row)

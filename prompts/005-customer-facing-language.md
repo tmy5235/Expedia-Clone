@@ -8,6 +8,8 @@
 
 ## Result
 
-The visible interface now uses standard travel-site terminology for traveler
-selection, search-result booking actions, booking history, status messages, and
-deletion confirmation. The supplied records remain fictional and local.
+The interface uses standard travel-site terminology for search-result booking
+actions, history, status messages, and deletion confirmation. In the current
+[accounts extension](006-accounts-personalized-pricing.md), Your account and
+the signed-in username replace traveler selection. The account form explicitly
+asks for made-up classroom credentials; all records remain fictional and local.

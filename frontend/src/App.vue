@@ -1,27 +1,29 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, watch } from 'vue'
 import BookingHistory from './components/BookingHistory.vue'
 import { useBookings } from './composables/useBookings.js'
 
-import { searchStays } from './api/stays'
+import AccountPanel from './components/AccountPanel.vue'
+import { useAccount } from './composables/useAccount.js'
+import { useSearch } from './composables/useSearch.js'
 
-const {
-  users, userId, bookings, busy, historyLoading, historyError, actionError, message,
-  initialize, loadHistory, selectTraveler, book, cancel, remove,
-} = useBookings()
-onMounted(initialize)
-
-const hotelName = ref('')
-const searchedName = ref('')
-const stays = ref([])
-const error = ref('')
-const hasSearched = ref(false)
-const isLoading = ref(false)
+const account = useAccount()
+const { user, busy: accountBusy, error: accountError, message: accountMessage } = account
+const { userId, bookings, busy, historyLoading, historyError, actionError, message,
+  loadHistory, selectTraveler, book, cancel, remove } = useBookings()
+const search = useSearch()
+const { hotelName, searchedName, stays, error, hasSearched, isLoading, submitSearch } = search
+onMounted(account.initialize)
+watch(user, async (current) => {
+  search.clear()
+  userId.value = current?.user_id || ''
+  await selectTraveler()
+}, { flush: 'sync' })
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
-  maximumFractionDigits: 0,
+  minimumFractionDigits: 2,
 })
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -38,35 +40,6 @@ function formatDate(value) {
   return dateFormatter.format(new Date(`${value}T00:00:00`))
 }
 
-function formatTravelerName(value) {
-  return value.replace(/^Demo\s+/i, '')
-}
-
-async function submitSearch() {
-  const query = hotelName.value.trim()
-  error.value = ''
-
-  if (!query) {
-    stays.value = []
-    hasSearched.value = false
-    error.value = 'Enter a hotel name to search.'
-    return
-  }
-
-  isLoading.value = true
-  searchedName.value = query
-  stays.value = []
-
-  try {
-    stays.value = await searchStays(query)
-    hasSearched.value = true
-  } catch (searchError) {
-    hasSearched.value = false
-    error.value = searchError instanceof Error ? searchError.message : 'Search failed. Try again.'
-  } finally {
-    isLoading.value = false
-  }
-}
 </script>
 
 <template>
@@ -74,18 +47,11 @@ async function submitSearch() {
     <h1>Expedia Clone</h1>
     <p>Search for available stays by hotel name and manage your bookings.</p>
 
-    <section aria-labelledby="traveler-heading">
-      <h2 id="traveler-heading">Traveler</h2>
-      <label for="traveler">Select a traveler</label>
-      <select id="traveler" v-model="userId" :disabled="busy || historyLoading" @change="selectTraveler">
-        <option value="" disabled>Select a traveler</option>
-        <option v-for="user in users" :key="user.user_id" :value="user.user_id">{{ formatTravelerName(user.display_name) }}</option>
-      </select>
-      <button v-if="users.length === 0 && !busy" @click="initialize">Reload travelers</button>
-      <p v-if="busy" role="status">Saving or loading booking data…</p>
-      <p v-if="actionError" class="error" role="alert">{{ actionError }}</p>
-      <p v-if="message" role="status">{{ message }}</p>
-    </section>
+    <AccountPanel :user="user" :busy="accountBusy || busy || isLoading" :error="accountError" :message="accountMessage"
+      @submit="account.submit" @logout="account.logout" @retry="account.initialize" />
+    <p v-if="busy" role="status">Saving booking…</p>
+    <p v-if="actionError" class="error" role="alert">{{ actionError }}</p>
+    <p v-if="message" role="status">{{ message }}</p>
 
     <form @submit.prevent="submitSearch">
       <label for="hotel-name">Hotel name</label>
@@ -97,10 +63,10 @@ async function submitSearch() {
           type="search"
           placeholder="Harbor Lantern Hotel"
           autocomplete="off"
-          :disabled="isLoading"
+          :disabled="isLoading || accountBusy"
           :aria-invalid="Boolean(error)"
         />
-        <button type="submit" :disabled="isLoading">
+        <button type="submit" :disabled="isLoading || accountBusy">
           {{ isLoading ? 'Searching…' : 'Search' }}
         </button>
       </div>
@@ -117,6 +83,8 @@ async function submitSearch() {
       </p>
 
       <template v-else>
+        <p v-if="user">Matching searches today: {{ stays[0].search_count }} · America/New_York. Rates increase 20% from the fourth matching search.</p>
+        <p v-else>Log in before searching to book a stay.</p>
         <p>{{ stays.length }} {{ stays.length === 1 ? 'stay' : 'stays' }} found.</p>
 
         <div class="table-wrapper">
@@ -147,7 +115,7 @@ async function submitSearch() {
                 <td>{{ stay.nights }}</td>
                 <td>{{ formatCurrency(stay.nightly_rate_cents) }}</td>
                 <td>{{ formatCurrency(stay.total_cents) }}</td>
-                <td><button :disabled="busy || historyLoading || !userId" :aria-label="`Book stay ${stay.trip_id}`" @click="book(stay.trip_id)">Book stay</button></td>
+                <td><button :disabled="busy || accountBusy || historyLoading || !userId" :aria-label="`Book stay ${stay.trip_id}`" @click="book(stay)">Book stay</button></td>
               </tr>
             </tbody>
           </table>

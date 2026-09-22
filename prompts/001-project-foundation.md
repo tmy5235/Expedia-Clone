@@ -8,4 +8,6 @@
 
 The project keeps separate `frontend/` and `backend/` folders. The Hello Agent
 calculator was replaced with the Part 1 CSV hotel search, and Part 2 later added
-persistent SQLite booking CRUD without changing that separation.
+persistent SQLite booking CRUD without changing that separation. The current
+[accounts and personalized-pricing extension](006-accounts-personalized-pricing.md)
+adds explicit MVC controllers, server-managed login, and per-user daily prices.

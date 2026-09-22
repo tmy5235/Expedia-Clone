@@ -8,8 +8,9 @@
 
 ## Result
 
-The backend imports all four fictional CSV files only when it creates the
-database. Vue lets a selected traveler book a searched stay, read history,
-cancel while retaining the record, and delete a test booking. Automated and
-browser checks use temporary databases so normal application data is not
-changed.
+At this historical checkpoint, the backend imported all four fictional CSVs
+once, and Vue let a selected traveler create, read, cancel, and delete bookings.
+The current [Activity 3 extension](006-accounts-personalized-pricing.md) replaces
+traveler selection with login, protects booking ownership, migrates existing
+records, and adds daily personalized search pricing and saved booking totals.
+Automated and browser checks continue to use temporary databases.

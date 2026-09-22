@@ -25,7 +25,7 @@ function remove(bookingId) {
     <p v-else-if="bookings.length === 0">No bookings for this traveler yet.</p>
     <div v-else class="table-wrapper">
       <table>
-        <caption>Saved bookings for the selected traveler</caption>
+        <caption>Saved bookings for the signed-in traveler</caption>
         <thead><tr>
           <th scope="col">Booking ID</th><th scope="col">Hotel / stay</th>
           <th scope="col">Dates</th><th scope="col">Total</th><th scope="col">Booked on</th>

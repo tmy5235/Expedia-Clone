@@ -16,12 +16,11 @@ async function request(path, options, expectsArray = false) {
   return data
 }
 
-export const getUsers = () => request('/users', undefined, true)
 export const getBookings = (userId) => request(`/bookings?${new URLSearchParams({ user_id: userId })}`, undefined, true)
-export const createBooking = (userId, tripId) => request('/bookings', {
+export const createBooking = (userId, tripId, searchId) => request('/bookings', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ user_id: userId, trip_id: tripId }),
+  body: JSON.stringify({ user_id: userId, trip_id: tripId, search_id: searchId }),
 })
 export const cancelBooking = (bookingId, userId) => request(`/bookings/${encodeURIComponent(bookingId)}`, {
   method: 'PATCH',

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { createBooking, cancelBooking, deleteBooking, getBookings, getUsers } from '../src/api/bookings.js'
+import { createBooking, cancelBooking, deleteBooking, getBookings } from '../src/api/bookings.js'
 import { useBookings } from '../src/composables/useBookings.js'
 
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status })
@@ -12,19 +12,17 @@ test('booking requests use backend CRUD with traveler and stay IDs', async (cont
     if (options?.method === 'DELETE') return new Response(null, { status: 204 })
     return json(options ? { booking_id: 'B-new' } : [])
   })
-  await getUsers()
   await getBookings('U006')
-  await createBooking('U006', 'T001')
+  await createBooking('U006', 'T001', 4)
   await cancelBooking('B-new', 'U006')
   await deleteBooking('B-new', 'U006')
-  assert.equal(calls[0][0], '/api/users')
-  assert.equal(calls[1][0], '/api/bookings?user_id=U006')
-  assert.equal(calls[2][1].method, 'POST')
-  assert.deepEqual(JSON.parse(calls[2][1].body), { user_id: 'U006', trip_id: 'T001' })
-  assert.equal(calls[3][1].method, 'PATCH')
-  assert.deepEqual(JSON.parse(calls[3][1].body), { user_id: 'U006', status: 'cancelled' })
-  assert.equal(calls[4][0], '/api/bookings/B-new?user_id=U006')
-  assert.equal(calls[4][1].method, 'DELETE')
+  assert.equal(calls[0][0], '/api/bookings?user_id=U006')
+  assert.equal(calls[1][1].method, 'POST')
+  assert.deepEqual(JSON.parse(calls[1][1].body), { user_id: 'U006', trip_id: 'T001', search_id: 4 })
+  assert.equal(calls[2][1].method, 'PATCH')
+  assert.deepEqual(JSON.parse(calls[2][1].body), { user_id: 'U006', status: 'cancelled' })
+  assert.equal(calls[3][0], '/api/bookings/B-new?user_id=U006')
+  assert.equal(calls[3][1].method, 'DELETE')
 })
 
 test('reports API, validation, connection, and invalid-response errors clearly', async (context) => {
@@ -33,7 +31,7 @@ test('reports API, validation, connection, and invalid-response errors clearly',
   mock.mock.mockImplementation(async () => json({ detail: [{ msg: 'invalid' }] }, 422))
   await assert.rejects(createBooking('', ''), /could not be completed/)
   mock.mock.mockImplementation(async () => { throw new Error('offline') })
-  await assert.rejects(getUsers(), /Unable to reach/)
+  await assert.rejects(getBookings('U001'), /Unable to reach/)
   mock.mock.mockImplementation(async () => json({}))
   await assert.rejects(getBookings('U001'), /invalid response/)
 })
@@ -42,7 +40,6 @@ test('mutation reloads saved history and failed mutation preserves history', asy
   let saved = []
   let fail = false
   context.mock.method(globalThis, 'fetch', async (url, options) => {
-    if (url === '/api/users') return json([{ user_id: 'U006' }])
     if (options) {
       if (fail) return json({ detail: 'Database unavailable.' }, 503)
       saved = [{ booking_id: 'B-new', status: 'confirmed' }]
@@ -51,9 +48,10 @@ test('mutation reloads saved history and failed mutation preserves history', asy
     return json(saved)
   })
   const state = useBookings()
-  await state.initialize()
+  state.userId.value = 'U006'
+  await state.loadHistory()
   assert.deepEqual(state.bookings.value, [])
-  await state.book('T001')
+  await state.book({ trip_id: 'T001', search_id: 4 })
   assert.equal(state.bookings.value[0].booking_id, 'B-new')
   assert.equal(state.message.value, 'Booking saved. View it in booking history.')
   fail = true
@@ -84,7 +82,7 @@ test('history refresh failures show an error while preserving successful save no
   context.mock.method(globalThis, 'fetch', async (_url, options) => options ? json({ booking_id: 'B-new' }, 201) : json({ detail: 'History unavailable.' }, 503))
   const state = useBookings()
   state.userId.value = 'U006'
-  await state.book('T001')
+  await state.book({ trip_id: 'T001', search_id: 4 })
   assert.equal(state.message.value, 'Booking saved. View it in booking history.')
   assert.match(state.historyError.value, /History unavailable/)
   assert.equal(state.busy.value, false)

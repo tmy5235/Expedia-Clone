@@ -20,6 +20,17 @@
 - Use parameterized SQL and enable foreign-key checks.
 - Add or update tests whenever backend behavior changes. Tests must use temporary databases and must not modify normal application data.
 
+## MVC, Accounts, and Personalized Pricing
+
+- Keep SQLite persistence and migrations in the Model; keep account, search, urgency, and pricing logic in backend controllers; keep Vue focused on input and presentation.
+- Preserve original user IDs, booking references, and saved changes when migrating the database. Never reseed an existing database.
+- Account usernames are unique and case-insensitive. Use only fictional credentials; readable passwords are permitted for this classroom exercise.
+- Resolve the current user from the server-managed session. Require that user to own every booking read or mutation; logout invalidates the session.
+- Record each signed-in, nonempty search, including no-match searches. Normalize queries by trimming and casefolding. Count the current submission atomically with prior matching searches for that user and calendar day in `America/New_York`.
+- Searches 1–3 return base price; search 4 onward returns base × 1.20 once. Keep hotel base rates unchanged and preserve the accepted total on saved bookings.
+- Vue displays backend prices and clears stale results/history when the current account changes. Anonymous searches are unrecorded and use base prices.
+- Verify account errors, per-user/query/day isolation, the $100 → $120 threshold, migration, booking CRUD, and restart persistence. See `docs/design.md` and `docs/verification.md`.
+
 ## Frontend
 
 - Use Vue 3 with the Composition API and `<script setup>`.
@@ -63,7 +74,7 @@ Trigger: When the user says **“Run the smoke test”**, verify the working app
 3. Check the intended backend and frontend ports. Never stop an unrelated process.
 4. Start only the services needed for the test.
 5. Verify hotel search through the frontend and confirm matching stays are displayed.
-6. When booking features exist, verify create, read, cancel, and delete through the frontend.
+6. Verify create account, duplicate rejection, invalid login, login/logout, and personalized pricing through the frontend; then verify booking create, read, cancel, and delete as the signed-in owner.
 7. Confirm saved changes remain after refresh and restarting both services with the same test database.
 8. Unless the user asks to keep the app running, stop only the processes created by the smoke test.
 9. Report the checks performed, their results, and anything not verified.

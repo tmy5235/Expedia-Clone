@@ -7,5 +7,8 @@ This folder keeps the major user instructions that shaped the project. It is not
 3. [Part 1 hotel search](003-part-1-hotel-search.md) — implement only the CSV-backed search interface and API.
 4. [Part 2 SQLite CRUD](004-part-2-sqlite-crud.md) — seed SQLite once and add booking CRUD through the frontend.
 5. [Customer-facing booking language](005-customer-facing-language.md) — present the local booking flow with standard travel-site terminology.
+6. [Accounts and personalized pricing](006-accounts-personalized-pricing.md) — extend Part 2 with MVC account/session controllers and daily per-user search pricing while preserving booking CRUD.
+
+Prompts 1–5 preserve the earlier instructions and identify later changes; prompt 6 describes the current implementation and publication request.
 
 Add another numbered prompt only when a new instruction changes the project scope, implementation, data model, or verification process. Leave out routine follow-up questions, tool output, secrets, and personal information.
