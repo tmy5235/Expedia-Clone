@@ -117,17 +117,14 @@ The changed View collects credentials, shows identity/feedback, and renders
 backend prices. The stored history and unchanged hotel rate explain the observed
 result without relying on frontend-only state.
 
-## Submission
+## Project resources and limitations
 
-This is the updated Assignment 1 Part 2 report, including the optional Activity 3
-accounts and personalized-pricing extension. Upload this `report.md` file to the
-course submission page. The repository's `main` branch contains the implementation
-and final report; the commit link above identifies the tested code and evidence.
-Course upload remains the student's action.
-
-See [README](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/README.md) for setup and demo credentials,
-[verification guide](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/verification.md) for repeatable checks and DB Browser
-queries, and [current handoff](https://github.com/tmy5235/Expedia-Clone/blob/main/handoffs/current.md) for project status.
+The repository's `main` branch contains the implementation and final report;
+the implementation commit linked above identifies the tested code and evidence.
+Setup and demo credentials are documented in the
+[README](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/README.md).
+The [verification guide](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/verification.md)
+contains repeatable checks and DB Browser queries.
 
 Limitations: fictional local classroom app; readable demo passwords and simple
 sessions; no production authentication, payments, room inventory, or live

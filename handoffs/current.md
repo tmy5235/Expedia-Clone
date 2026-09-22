@@ -39,6 +39,6 @@
 
 ## Next action
 
-Upload the finalized `report.md` to the Part 2 course submission page. Implementation, documentation/link audit, automated rechecks, browser evidence, and test-service cleanup are complete. The feature branch and `main` carry the submission revision on GitHub. The course upload has not been performed by the agent.
+Upload the finalized `report.md` to the Part 2 course submission page. Implementation, documentation/link audit, automated rechecks, browser evidence, and test-service cleanup are complete. The feature branch preserves the verified submission checkpoint; `main` includes the latest report edit removing student-facing submission directions. The course upload has not been performed by the agent.
 
 Limitations: fictional local classroom accounts with readable demo passwords and simple sessions; no production authentication, payments, or real reservations.
