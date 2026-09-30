@@ -5,6 +5,16 @@ import { useBookings } from '../src/composables/useBookings.js'
 
 const json = (value, status = 200) => new Response(JSON.stringify(value), { status })
 
+test('signed-out booking is blocked without a request or a lingering busy state', async (context) => {
+  const fetchMock = context.mock.method(globalThis, 'fetch')
+  const state = useBookings()
+  await state.book({ trip_id: 'T009', search_id: 4 })
+  assert.equal(fetchMock.mock.callCount(), 0)
+  assert.equal(state.actionError.value, 'Log in to book a stay.')
+  assert.equal(state.busy.value, false)
+  assert.deepEqual(state.bookings.value, [])
+})
+
 test('booking requests use backend CRUD with traveler and stay IDs', async (context) => {
   const calls = []
   context.mock.method(globalThis, 'fetch', async (url, options) => {

@@ -1,138 +1,119 @@
-# Expedia Clone
+# Hotel Finder
 
-Expedia Clone is a small full-stack travel application built from the Hello Agent project structure. A FastAPI backend owns hotel search, booking rules, and stored data, while a Vue frontend owns user input and presentation.
+Hotel Finder searches hotel locations near a U.S. ZIP code and displays them in
+a synchronized list and map. Vue handles the interface, FastAPI handles Geoapify
+requests and validation, and Leaflet displays OpenStreetMap tiles.
 
-The application uses fictional classroom data and local booking records. It does not connect to Expedia, process payments, or create real reservations.
+A separate fictional booking demo at `/?demo=booking` provides account login,
+hotel-name search, personalized sample prices, and persistent booking history.
+Live hotel locations are independent of those sample stays and cannot be booked.
 
-## Project structure
+## Features
 
-```text
-expedia-clone/
-├── backend/               # FastAPI application and backend tests
-├── frontend/              # Vue application powered by Vite
-├── expedia-clone-data/    # Supplied hotel, trip, user, and booking CSV files
-├── docs/                  # Design and verification notes
-├── handoffs/              # Current project status
-├── prompts/               # Selected project instructions
-├── AGENTS.md              # Project rules for coding agents
-├── report.md              # Part 2 submission report
-└── README.md
-```
+- Five-digit U.S. ZIP input, including leading zeros; the returned location must
+  match the requested ZIP before a hotel search runs.
+- Hotels within 5 km of the returned ZIP point, with one page of up to 20 records.
+  The center is not the user's location or the entire ZIP boundary.
+- Shared selection between numbered hotel cards and map markers, including
+  Enter/Space keyboard controls and a responsive layout.
+- Separate loading, invalid input, unresolved ZIP, empty, failure and rate-limit
+  feedback. Missing hotel names and addresses are labeled honestly.
+- Visible provider attribution; no invented rates, ratings or availability.
 
 ## Setup
 
-### Backend
+Tested with Python 3.14.7 and Node 24.18.1. Python 3.11+ is needed for the backend's
+type features; the frontend declares Node `^22.18.0 || >=24.12.0`.
+
+From the repository root:
+
+```bash
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+cd frontend
+npm ci
+cd ..
+```
+
+Create a project-root `.env` beside `backend/` and `frontend/`:
+
+```dotenv
+GEOAPIFY_API_KEY=your-own-local-key
+```
+
+The backend loads this file using an explicit path. Process environment values
+have priority. Keep the file untracked and never put this key in a `VITE_`
+variable. Restart FastAPI after changing the key. `GET /api/health` reports only
+whether it is configured; that check does not contact Geoapify.
+
+Start the backend:
 
 ```bash
 cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-uvicorn app.main:app --reload
+.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-The API will be available at `http://localhost:8000`. Check it with `GET /health`.
-
-Run the backend tests with:
-
-```bash
-cd backend
-.venv/bin/python -m pytest
-```
-
-On first startup, the backend creates `backend/data/expedia.sqlite3` and imports
-the supplied hotel, trip, traveler, and booking CSV records. Later starts
-reuse that database, so created, cancelled, and deleted bookings persist. Set
-`EXPEDIA_DB_PATH` to use a different database location, such as an isolated
-database for manual verification.
-
-### Frontend
+In a second terminal, start the frontend:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-Vite will print the local development URL when it starts. During development, Vite proxies `/api` requests to FastAPI at `http://127.0.0.1:8000`.
+Open http://127.0.0.1:5173. Vite proxies `/api` to port 8000. Set
+`EXPEDIA_API_TARGET` to use a different backend for isolated checks.
+Leaflet 1.9.4 is pinned in the frontend manifests. OSM raster tiles need no key.
 
-Run the frontend checks with:
+## Data and request behavior
+
+Search runs only on submission. A resolved search normally uses two provider
+requests: geocoding and Places. There is no automatic retry or pagination;
+selecting hotels or moving the map makes no additional Places requests. Coverage
+varies, and the 20-record limit is not an exhaustive inventory. Tile availability
+is independent of hotel results.
+
+The sample booking database is created at `backend/data/expedia.sqlite3` and seeded
+once from `expedia-clone-data/`. Later starts preserve accounts and saved booking
+changes. `EXPEDIA_DB_PATH` selects another database, such as a temporary test file.
+Live discovery does not change the booking database or record hotel-name searches.
+
+## Fictional booking demo
+
+Open http://127.0.0.1:5173/?demo=booking. Sample users `traveler1` through
+`traveler6` use the fictional password `classroom-demo`. Accounts and sessions are
+managed by the backend. Each account can create, read, cancel and delete only its
+own bookings. Passwords are stored as readable text for the local demo; use only
+fictional credentials.
+
+For the same signed-in user, normalized hotel-name query and day in
+`America/New_York`, searches 1–3 return the base rate; search 4 onward returns base
+× 1.20 once. The accepted total is saved with the booking. Anonymous searches use
+base rates. See [booking design](docs/design.md) for migration and pricing details.
+
+The demo also includes a [ZIP-coordinate lookup](docs/zip-lookup.md) that displays
+the verified ZIP, country, locality and coordinates without requesting hotels.
+
+## Verification
 
 ```bash
-cd frontend
-npm test
-npm run lint
-npm run build
+(cd backend && .venv/bin/python -m pytest -q)
+(cd frontend && npm test && npm run lint && npm run build)
 ```
 
-## Application behavior
+Automated tests mock provider requests and use temporary databases. Browser
+verification and simulated-provider instructions are in the
+[discovery verification guide](docs/assignment2-verification.md). Original account,
+pricing and persistence checks are in the [booking verification guide](docs/verification.md).
 
-The completed Part 1 checkpoint reads `hotels.csv` and `trips.csv`, connects
-their records by `hotel_id`, and displays matching hotel stays. Part 2 keeps the
-same case-insensitive, partial-name search while moving application reads to
-SQLite after the one-time seed.
+## Documentation
 
-Create an account and log in to book a stay from a search result. The booking history
-comes from FastAPI and supports reading saved records, changing a confirmed
-booking to cancelled while retaining it, and permanently deleting a test
-booking after an in-page confirmation. The customer-facing interface uses
-normal traveler and booking terminology while the project continues to use the
-supplied fictional classroom records.
+- [App report](report.md)
+- [Research and early design](docs/assignment2-research.md)
+- [Discovery API and MVC design](docs/assignment2-design.md)
+- [AI development evidence](docs/assignment2-ai-evidence.md)
+- [Selected prompts](prompts/README.md)
 
-
-## Accounts and personalized pricing (Part 2 extension)
-
-No application dependency installation or upgrade is needed for this extension.
-Start the backend once to apply the additive version-2 migration to an existing
-version-1 database. Existing users, IDs, bookings, cancellations, and deletions
-are preserved. Copy the database as a backup before manually experimenting in a viewer.
-
-Existing fictional travelers can log in as `traveler1` through `traveler6`, each
-with the **made-up classroom password** `classroom-demo`. New usernames use 3–40
-letters, digits, or underscores and are case-insensitive. Create Account saves
-the user, then asks you to log in. Passwords are case-sensitive, stored as readable
-text for this activity, and must be fictional. Email, OAuth, password recovery,
-and production authentication are outside this exercise.
-
-Login is tracked by a server-side SQLite session and an HTTP-only cookie, so a
-browser refresh or app restart retains the account. Logout invalidates the session
-and clears displayed history/results. Bookings can only be managed by their owner.
-Anonymous visitors can search base rates but must log in and search again to book.
-
-Every submitted nonempty search by a signed-in user is saved, including searches
-with no results. Queries are compared after trimming surrounding spaces and
-casefolding. For the same user and normalized query on the same calendar day in
-**America/New_York**, searches 1–3 show base price and searches 4 onward show
-**base price × 1.20**. The current search counts. The increase never compounds or
-updates the stored hotel rate. A different query, user, or calendar day has a
-separate count. Prices round to cents; bookings retain the total accepted from
-the selected search. Repeated searching is an assumed urgency signal, not proof.
-
-Use **Valley Trail Inn** (`H008`, trip `T008`) for the $100 → $120 demonstration.
-The two-night total changes from $200 to $240.
-
-### Database viewer
-
-DB Browser for SQLite was installed locally with permission using Homebrew.
-For another machine, obtain it from [the official download page](https://sqlitebrowser.org/dl/).
-Choose **Open Database** and select `backend/data/expedia.sqlite3` after starting
-the new backend, or use an isolated test database. **Browse Data** shows `users`,
-`search_history`, `hotels`, and `bookings`; **Execute SQL** runs the read-only
-queries in [the verification guide](docs/verification.md). No DB viewer is
-required to run the app.
-
-### Isolated verification ports
-
-If the regular ports are busy, leave their processes running and use:
-
-```bash
-# From backend/
-EXPEDIA_DB_PATH=/tmp/expedia-accounts-test.sqlite3 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8001
-# From frontend/, in another terminal
-EXPEDIA_API_TARGET=http://127.0.0.1:8001 npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
-```
-
-`EXPEDIA_API_TARGET` configures only Vite's development proxy; it defaults to
-`http://127.0.0.1:8000`. `EXPEDIA_DB_PATH` selects the backend database file.
-See [MVC design](docs/design.md), [verification](docs/verification.md), and
-[the updated Part 2 report](report.md).
+Source is separated into `backend/app/` and `frontend/src/`; tests live alongside
+each application. `docs/` contains design and verification evidence. Development
+status is recorded in `handoffs/current.md`. Secrets, dependencies, build output,
+caches and local SQLite files are excluded from version control.

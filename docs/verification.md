@@ -1,5 +1,29 @@
 # Verification
 
+## Live discovery
+
+The current feature's expected/observed record, fixture-server instructions,
+and limitations are in [Discovery verification](assignment2-verification.md).
+September 29 checks: 117 backend tests, 32 frontend tests, lint/build passed;
+live ZIP 16802 and simulated browser error/keyboard/mobile states verified.
+
+## ZIP input and table
+
+1. Open `/api/health` on the backend and record only its configuration status.
+2. Check `/api/demo/zip-location` directly for the fixed `16802` milestone.
+3. In the Vue ZIP panel, submit `16802` and confirm the table matches the response.
+4. Enter a different ZIP and confirm the new value is used. Editing the input
+   must clear the old table. Invalid input such as `123` must show validation.
+5. Verify the hotel-name search still returns matching stays.
+6. Capture the entered ZIP and returned table; exclude keys and `.env` contents.
+   The health status may be stated separately in the submission note.
+
+Each successful live lookup consumes provider quota; routine checks use the
+mocked backend and frontend tests. The September 24 extension verification
+passed 97 backend tests, 23 frontend tests, both frontend linters, and the
+production build. A pre-existing third-party TestClient deprecation warning
+remains. See [ZIP verification evidence](zip-lookup-submission.md).
+
 ## Automated checks
 
 Run with the existing dependencies; no upgrades are required:

@@ -7,9 +7,11 @@ from datetime import datetime
 
 from fastapi import Cookie, FastAPI, HTTPException, Path as PathParameter, Query, Response
 from fastapi.responses import JSONResponse
-from app.schemas import StayResponse, TravelerResponse, BookingResponse, CreateBooking, CancelBooking, Credentials
+from app.config import load_geoapify_api_key
+from app.schemas import StayResponse, TravelerResponse, BookingResponse, CreateBooking, CancelBooking, Credentials, HotelDiscoveryResponse
 from app.controllers.accounts import AccountController
 from app.controllers.search import SearchController
+from app.controllers import discovery, locations
 
 from app.database import Database, RecordNotFound
 
@@ -24,9 +26,12 @@ def create_app(database_path: Path | None = None, clock: Callable[[], datetime] 
 
     accounts = AccountController(database)
     searches = SearchController(database, clock)
+    geoapify_configured = False
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
+        nonlocal geoapify_configured
+        geoapify_configured = bool(load_geoapify_api_key())
         database.initialize()
         yield
 
@@ -44,9 +49,54 @@ def create_app(database_path: Path | None = None, clock: Callable[[], datetime] 
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @application.get("/api/health")
+    def api_health() -> dict[str, str]:
+        return {
+            **health(),
+            "geoapify": "key is configured" if geoapify_configured else "key is not configured",
+        }
+
+    def zip_location_response(postcode: str) -> locations.ZipLocation:
+        try:
+            location = locations.lookup_zip(postcode)
+        except locations.GeoapifyConfigurationError:
+            raise HTTPException(status_code=503, detail="Geoapify key is not configured.") from None
+        except locations.GeoapifyRequestError:
+            raise HTTPException(status_code=502, detail="Location provider request failed.") from None
+        if location is None:
+            raise HTTPException(status_code=404, detail=f"ZIP {postcode} could not be resolved.")
+        return location
+
+    @application.get("/api/demo/zip-location")
+    def demo_zip_location() -> locations.ZipLocation:
+        return zip_location_response("16802")
+
+    @application.get("/api/zip-location")
+    def get_zip_location(
+        postcode: Annotated[str, Query(min_length=5, max_length=5, pattern=r"^[0-9]{5}$")],
+    ) -> locations.ZipLocation:
+        return zip_location_response(postcode)
+
     @application.post("/api/accounts", response_model=TravelerResponse, status_code=201)
     def create_account(credentials: Credentials) -> dict:
         return accounts.create(credentials.username, credentials.password)
+
+    @application.get("/api/discovery/hotels", response_model=HotelDiscoveryResponse)
+    def discover_hotels(
+        postcode: Annotated[str, Query(min_length=5, max_length=5, pattern=r"^[0-9]{5}$")],
+        response: Response,
+    ) -> HotelDiscoveryResponse:
+        response.headers["Cache-Control"] = "no-store"
+        try:
+            return discovery.discover_hotels(postcode)
+        except discovery.UnresolvedZipError:
+            raise HTTPException(status_code=404, detail=f"U.S. ZIP {postcode} could not be resolved.") from None
+        except locations.GeoapifyConfigurationError:
+            raise HTTPException(status_code=503, detail="Hotel search is not configured. Please contact the app owner.") from None
+        except locations.GeoapifyRateLimitError:
+            raise HTTPException(status_code=429, detail="The location provider's request limit was reached. Please try again later.") from None
+        except locations.GeoapifyRequestError:
+            raise HTTPException(status_code=502, detail="Hotel search failed because the location provider is unavailable or returned an invalid response. Please try again.") from None
 
     @application.post("/api/login", response_model=TravelerResponse)
     def login(credentials: Credentials, response: Response, session: Session = None) -> dict:

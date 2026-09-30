@@ -1,10 +1,25 @@
-# Expedia Clone Frontend
+# Hotel Finder Frontend
 
 This Vue 3 interface uses the Composition API with `<script setup>` and Vite.
-It provides the complete Part 2 hotel search and booking workflow while FastAPI
-and SQLite own all persistent data.
+It provides live hotel discovery plus a separate fictional hotel search and
+booking workflow. FastAPI handles Geoapify requests; SQLite owns all persistent data.
 
-## Responsibilities
+## Live discovery
+
+Visible brand: **Hotel Finder**. `App.vue` holds the small header and
+discovery page. `BookingDemo.vue` preserves the original workflow and is loaded
+only at `/?demo=booking`; there is no legacy demo control on the homepage. `discovery-landscape.svg`
+is an original decorative hero illustration, not a photograph of returned hotels.
+
+`HotelDiscovery.vue` renders the ZIP input and returned hotel list; `HotelMap.vue`
+uses approved Leaflet 1.9.4 and keyless OSM tiles. `useDiscovery.js` shares one
+provider place ID between list/marker selection and clears stale results.
+`api/discovery.js` calls only the backend discovery route. No backend API key,
+room prices, ratings, availability, or shortlist is present in this feature.
+See [Discovery design](../docs/assignment2-design.md) and
+[verification](../docs/assignment2-verification.md).
+
+## Original booking workflow responsibilities
 
 - Search for full or partial hotel names and display matching stays in a labeled table.
 - Create an account, log in/out, restore the server session, and read the signed-in traveler's history from FastAPI.
@@ -13,7 +28,7 @@ and SQLite own all persistent data.
 - Keep only temporary interface state in Vue; never treat frontend state as persistent storage.
 - Remain readable on phone and desktop with keyboard focus and accessible table headings.
 
-The interface uses standard traveler and booking terminology. The underlying
+The booking interface uses standard traveler and booking terminology. Its underlying
 records are the fictional course data described in
 [`expedia-clone-data/README.md`](../expedia-clone-data/README.md).
 

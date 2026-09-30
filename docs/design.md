@@ -1,13 +1,17 @@
 # Expedia Clone — MVC Design
 
-Part 2 uses Model–View–Controller responsibilities across Vue, FastAPI, and SQLite.
+Live discovery uses separate external-place schemas and
+list/map views. See [live discovery MVC/API design](assignment2-design.md).
+The original account/pricing design below remains in effect for fictional bookings.
+
+The booking demo uses Model–View–Controller responsibilities across Vue, FastAPI, and SQLite.
 The accounts and personalized-pricing extension was planned against these existing
 files and records before implementation; the table also maps the final changes.
 
 | Role | Account changes | Search and pricing changes | Files |
 | --- | --- | --- | --- |
 | Model | Add unique normalized `username` and classroom `password` to existing users; retain `user_id`, `display_name`, and booking references. Store opaque login sessions. | One shared `search_history` table references users; hotel base rates remain unchanged. Bookings store the accepted total. | `backend/app/database.py`, `backend/app/migrations.py`, `backend/app/schemas.py` |
-| View | Create Account, Login, Logout, signed-in username, errors and success feedback. Replace traveler selection with the current account. | Render the backend's nightly rate, total, and daily count; clear previous account results when identity changes. | `frontend/src/components/AccountPanel.vue`, `frontend/src/App.vue`, `frontend/src/components/BookingHistory.vue` |
+| View | Create Account, Login, Logout, signed-in username, errors and success feedback. Replace traveler selection with the current account. | Render the backend's nightly rate, total, and daily count; clear previous account results when identity changes. | `frontend/src/components/AccountPanel.vue`, `frontend/src/components/BookingDemo.vue`, `frontend/src/components/BookingHistory.vue` |
 | Controllers | Validate credentials, reject duplicates, look up users, compare passwords, save/delete sessions; enforce booking ownership. | Coordinate search/history, calculate local calendar day and urgency, then calculate the price from the stored base rate. | `backend/app/main.py`, `backend/app/controllers/accounts.py`, `search.py`, `urgency.py`, `pricing.py`; frontend API modules and `useAccount`, `useSearch`, `useBookings` composables |
 
 ## Stored model and migration

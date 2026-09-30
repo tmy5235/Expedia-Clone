@@ -1,132 +1,145 @@
-# Expedia Clone — Part 2: MVC, Accounts, and Personalized Pricing
+# Hotel Finder
 
-## Repository and revision
+Repository: [Expedia-Clone](https://github.com/tmy5235/Expedia-Clone).
 
-Repository: <https://github.com/tmy5235/Expedia-Clone>
+Assessed revision: **pending commit/publication**.
 
-Implementation checkpoint:
-[`5b4e1161620ea2dec398293152d9e0148be3a82f`](https://github.com/tmy5235/Expedia-Clone/commit/5b4e1161620ea2dec398293152d9e0148be3a82f).
+Demo recording: **`IST 402 - Assignment 2.1 SR.mov`** (separate companion file).
 
-Submission branch: [`main`](https://github.com/tmy5235/Expedia-Clone/tree/main).
-Development branch: `codex/part-2-accounts-pricing`.
-This report and the final handoff are recorded in a documentation commit after
-the implementation checkpoint. [View the submission report on GitHub](https://github.com/tmy5235/Expedia-Clone/blob/main/report.md).
+## Overview
 
-This revision extends the previous Part 2 merge,
-`4daf427a8fd9d5c632d6144b4f34b03120784cd0`. The preserved Part 1 checkpoint is
-`627cda2c36dfab77ffbf7cc74ff363a4198b8c17`.
+Hotel Finder accepts a five-digit U.S. ZIP code and displays nearby hotel
+locations in a synchronized list and map. FastAPI verifies the exact ZIP through
+Geoapify before requesting hotels within 5 km of the returned point. Vue handles
+input and selection; Leaflet displays the map with OpenStreetMap tiles.
 
-## Implementation and MVC responsibilities
+The returned point is the search center, not the user's device or every address
+within the ZIP boundary. Each search requests one page of up to 20 places; coverage
+varies and the results are not an exhaustive inventory. Missing names and addresses
+are labeled honestly. Live places have no invented prices, ratings or availability.
+The separate `/?demo=booking` page preserves the fictional account and booking demo.
 
-The existing FastAPI/Vue application retains hotel search and booking creation,
-history, cancellation, and deletion. This revision replaces traveler selection
-with account creation, login, and logout and adds the optional Activity 3 pricing
-exercise. All records and credentials are fictional and local.
+## Run the app
 
-| MVC role | Account feature | Personalized pricing feature |
-| --- | --- | --- |
-| Model | SQLite users retain IDs/display names and gain unique usernames and demo passwords. Sessions reference users. The migration preserves booking relationships and existing changes. | One shared history table stores user ID, normalized query, UTC timestamp, local calendar date, and count at submission. Hotels retain base rates; bookings save accepted totals. |
-| View | `AccountPanel.vue` provides account/login/logout controls, signed-in username, and feedback. `BookingHistory.vue` shows the current user's saved bookings. | `App.vue` renders the nightly price and total returned by the backend. `useSearch.js` handles requests and stale results; no pricing rule runs in Vue. |
-| Controllers | `controllers/accounts.py` creates accounts, checks credentials, and resolves the current user. FastAPI handlers validate requests and enforce booking ownership. | `controllers/search.py` coordinates the database, `urgency.py` determines the calendar day and threshold, and `pricing.py` applies the increase. `database.py` handles parameterized persistence and history counting. |
+Tested with Python 3.14.7 and Node 24.18.1. From a fresh checkout:
 
-The [design note](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/design.md) maps the changed files and data in more detail.
-The original CSV-reading implementation remains in `hotel_search.py`; current
-application reads use SQLite after the one-time seed.
+```bash
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+cd frontend
+npm ci
+cd ..
+```
 
-## Rules and account behavior
+Create a project-root `.env` with `GEOAPIFY_API_KEY=your-own-local-key`.
+The file is ignored and the key is used only by the backend. Restart FastAPI when
+changing it. In separate terminals, from the repository root:
 
-Usernames are case-insensitive, unique, and restricted to 3–40 letters, digits,
-or underscores. Passwords are case-sensitive and readable in SQLite, as permitted
-for this classroom activity. Existing users log in as `traveler1`–`traveler6`
-with the made-up password `classroom-demo`; their original IDs do not change.
-New accounts receive unique UUID-based IDs. No real personal credentials are used.
+```bash
+cd backend
+.venv/bin/python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
 
-The backend tracks login with an opaque session cookie and a SQLite session row.
-Logout deletes the session and clears displayed user data. A caller cannot manage
-another user's bookings by supplying a different `user_id`.
+```bash
+cd frontend
+npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
+```
 
-Every submitted nonempty search by a signed-in user is recorded, including a
-search with no matches. Matching ignores capitalization and surrounding spaces.
-The count includes the current submission and is scoped to user, normalized query,
-and calendar day in **America/New_York**, including daylight saving changes.
-Searches 1–3 return the stored base rate. Search 4 onward returns **base × 1.20**,
-rounded to cents, with no compounding. Anonymous searches use the base rate and
-create no history. A different query or the next local day starts a separate count.
-Repeated searching is an assumed urgency signal for this exercise; it does not
-prove that the traveler is in a hurry.
+Open http://127.0.0.1:5173. Vite proxies `/api` to FastAPI. `GET /api/health`
+reports configuration status without disclosing the key. OSM tiles need no key.
+See [README](README.md) for environment requirements and sample-account setup.
 
-A booking request includes the selected search ID. The backend checks search ownership
-and the chosen trip, calculates its rate from the saved submission count, and
-saves the total. Later searches do not change existing booking totals.
+## Research and design
 
-## Verification evidence
+Research used official product help and API documentation on September 29, 2026.
 
-Verification ran on September 21, 2026 in America/New_York using an isolated
-SQLite database and ports 8001/5174. Existing services on 8000/5173 were left running.
-No application dependencies were installed or upgraded. With permission, DB
-Browser for SQLite 3.13.1 was installed from the official Homebrew cask and opened
-against the verification database.
-
-| Check | Observed evidence |
+| Source | Observation and resulting decision |
 | --- | --- |
-| Backend regression tests | 28 passed, using temporary databases. Includes one-time seeding, version-1 migration, rollback, IDs/foreign keys, authentication, ownership, pricing, concurrent counts, rounding, and restart persistence. One existing TestClient deprecation warning remains. |
-| Frontend tests and checks | 14 tests passed; Oxlint, ESLint, and production build passed. |
-| Final documentation checkpoint | All 15 project-owned Markdown files audited; outdated account/search descriptions corrected, historical prompts labeled, local links checked, and report screenshots and setup/design/verification links pinned to the implementation commit. Automated tests, lint/build, and whitespace checks passed again before publication. |
-| Create account and reject duplicates | `class_user_a` created successfully. Reusing its username showed “That username is already taken.” |
-| Incorrect login | Wrong password showed “Incorrect username or password.” with no signed-in user. Backend tests also cover an unknown username. |
-| User A matching searches | Valley Trail Inn, H008/T008: searches 1, 2, 3 showed $100/night and $200 total; searches 4 and 5 showed $120/night and $240 total. Capitalization/space variants used the same count. |
-| Different query | A's first `Valley` search showed count 1 and $100/night, despite prior `Valley Trail` searches. |
-| Different user | `class_user_b` saw count 1 and $100/night for `Valley Trail`, with empty booking history. |
-| Next day | Injected-clock backend tests verified count resets at New York midnight, including daylight saving boundaries. The machine clock was not changed. |
-| Booking CRUD | A created a $240 T008 booking, read it after refresh, cancelled it with the row and price retained, then created and deleted a separate $200 test booking. |
-| Logout | Signed-in username, booking history, and previous search results disappeared. The backend rejects booking requests without a valid session. |
-| Both-service restart | B's session survived. A could log back in; its cancelled $240 booking remained and the deleted booking stayed absent. A's next matching search continued at count 6 and $120/night. |
-| Stored model | H008 remained `nightly_rate_cents = 10000`; `PRAGMA foreign_key_check` returned no rows. Original user/booking references remain valid; no records were reseeded. |
+| [Google Hotels](https://support.google.com/travel/answer/6276008?hl=en) | A list/map pairing supports comparing locations. Adopt synchronized selection; omit price/review/booking controls unsupported by the data. |
+| [Google Maps nearby search](https://support.google.com/maps/answer/4610185?co=GENIE.Platform%3DDesktop&hl=en) | Location-centered exploration is useful, but ordering alone does not explain a boundary. Show the verified ZIP center and 5 km circle. |
+| [Geoapify geocoding](https://apidocs.geoapify.com/docs/geocoding/) and [Places](https://apidocs.geoapify.com/docs/places/) | Verify the requested U.S. postcode; use the hotel category and circle filter. Preserve provider IDs and honest missing fields. |
+| [Leaflet](https://leafletjs.com/reference.html) | Use numbered markers and shared selection, explicit Enter/Space handling, text-only popups and map cleanup. |
+| [OSM tile policy](https://operations.osmfoundation.org/policies/tiles/) | Retain visible attribution and normal browser caching; avoid bulk/offline tile retrieval. |
+| [Geoapify pricing](https://www.geoapify.com/pricing/) and [terms](https://www.geoapify.com/terms-and-conditions/) | Limit request volume with explicit submit, duplicate prevention and no automatic retries/pagination; simulate failures and rate limits. |
 
-![Signed-in user A, sixth matching search at $120, and saved cancelled $240 booking after restart](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/screenshots/part2-accounts-pricing.png?raw=true)
+![Early mockup prepared before implementation](docs/screenshots/assignment2-early-mockup.svg)
 
-A final seventh-search screenshot also confirms the rate remains $120:
+The mockup established the ZIP form, numbered list/map selection and feedback
+states. The final design uses a simpler header, hotel illustration and prominent
+search card. Selected hotel coordinates remain visible; center coordinates are
+in a disclosure. On narrow screens the list sits above the map. The illustration
+and mockup are authored SVG; neither is a photograph of a returned property.
+[Research notes](docs/assignment2-research.md) record the design decisions.
 
-![User A still sees $120 on search seven](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/screenshots/part2-personalized-price.png?raw=true)
+## Architecture
 
-The four older Part 2 screenshots in `docs/screenshots/` show the earlier
-traveler-selection interface and remain historical evidence only.
+| Layer | Responsibility |
+| --- | --- |
+| Model | Validated external-place schemas with provider IDs and coordinates; existing SQLite models preserve sample accounts and bookings. |
+| Controller | Exact ZIP resolution, backend provider calls, radius enforcement, limits, normalization, deduplication and safe errors. |
+| View | ZIP input, transient request state, honest feedback and selection shared by provider ID between list and map. |
 
-## Trace: View → Controllers → Model → View
+An external hotel contains `place_id`, optional `name`/`address`, and numeric
+latitude/longitude; it does not inherit the sample hotel's nightly rate.
+[The API contract](docs/assignment2-design.md) documents response fields and errors.
+Discovery adds no SQLite tables or shortlist storage.
 
-1. In the Vue hotel-name form, `class_user_a` submitted `VALLEY TRAIL` for the
-   fourth time. `useSearch.submitSearch()` called the stay API.
-2. The FastAPI handler read the session cookie. The account controller resolved
-   A's stored `user_id`: `U-111d1c78533c46e5bea768776cd88167` in this isolated run.
-3. The search controller normalized the query to `valley trail` and retrieved
-   H008/T008. The database controller inserted search-history row 4 with A's user
-   reference, a UTC timestamp, local date `2026-09-21`, and `search_count = 4`.
-   The count and insertion occurred inside one write transaction.
-4. The urgency controller identified the fourth same-user/query/day submission.
-   The pricing controller used the unchanged 10000-cent base rate to return
-   12000 cents per night and 24000 cents for two nights.
-5. Vue displayed **$120.00** and **$240.00** directly from those returned fields.
-   Search 5 still returned $120, confirming that the increase did not compound.
-6. Booking from search 5 saved booking
-   `B-745cdaf519ba44ea8cf75b5a5c4550d6` at 24000 cents. Its cancelled row remained
-   after refresh and restart, while H008's base rate remained 10000 cents.
+## Verification
 
-The changed Model records are the new account/session/history records and the
-saved booking total. The changed Controllers calculate per-user daily pricing.
-The changed View collects credentials, shows identity/feedback, and renders
-backend prices. The stored history and unchanged hotel rate explain the observed
-result without relying on frontend-only state.
+Live ZIP: **16802**. Observation date: **September 29, 2026, America/New_York**.
 
-## Project resources and limitations
+| Input/action | Expected | Observed |
+| --- | --- | --- |
+| Live search | Exact center and nearby hotel places | State College, center 40.80317 / -77.86138; 20 cards/markers with cap notice. Count is an observation, not a fixed requirement. |
+| List Enter / marker Space or Enter | Matching selection in both views | Scholar Hotel and Hampton Inn selections synchronized card, marker and popup |
+| `123` | Validation without provider call | Five-digit feedback; stale results cleared |
+| Simulated `00501` | Leading zero preserved; missing fields handled | Two fictional places and honest missing-name/address labels |
+| Simulated empty/unresolved/failure/429 | Distinct outcomes | Empty response kept a center map; unresolved, failure and quota feedback remained errors |
+| 390 px viewport | Usable responsive interface | No horizontal overflow; keyboard selection and attribution available |
+| Automated checks | Preserve discovery and booking behavior | 117 backend tests, 32 frontend tests, both linters and production build passed |
 
-The repository's `main` branch contains the implementation and final report;
-the implementation commit linked above identifies the tested code and evidence.
-Setup and demo credentials are documented in the
-[README](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/README.md).
-The [verification guide](https://github.com/tmy5235/Expedia-Clone/blob/5b4e1161620ea2dec398293152d9e0148be3a82f/docs/verification.md)
-contains repeatable checks and DB Browser queries.
+![Live ZIP 16802 with matching selected card and marker](docs/screenshots/assignment2-final-results.png)
 
-Limitations: fictional local classroom app; readable demo passwords and simple
-sessions; no production authentication, payments, room inventory, or live
-reservation service. The supplied activity text guided implementation because
-the linked Canvas lecture was not accessible from the research tool.
+Additional views: [homepage](docs/screenshots/assignment2-final-home.png) and
+[mobile](docs/screenshots/assignment2-final-mobile.png).
+
+Run automated checks from the repository root:
+
+```bash
+(cd backend && .venv/bin/python -m pytest -q)
+(cd frontend && npm test && npm run lint && npm run build)
+```
+
+[The verification guide](docs/assignment2-verification.md) includes repeatable
+simulated-browser instructions. Automated tests use mocked providers and temporary
+SQLite files. Six live searches were made across development and final review;
+no normal account or booking data was changed. The configured backend key was
+absent from the frontend build, and `.env` remained ignored and untracked.
+
+Limitations: one provider page, variable coverage and imagery, no forced live
+quota exhaustion or real tile outage. One existing Starlette TestClient deprecation
+warning remains. Original booking restart persistence is covered by temporary-
+database regression tests.
+
+## AI disclosure
+
+**OpenAI Codex desktop with GPT-6 Astra** assisted with research, early mockup,
+implementation, testing and documentation. The user confirmed the model, chose
+the interface and approved the exact Leaflet 1.9.4 installation. Tools included
+web research, terminal/file operations and browser automation. No additional AI
+agent or image-generation model was used.
+
+| Selected user prompt | Result |
+| --- | --- |
+| “For today we only want to implement part 1” | Separate live discovery without shortlist persistence |
+| “Approve Leaflet 1.9.4 installation” | Environment check, exact installation and version/build verification |
+| “make the layout or interface more simple like this image” | Simplified [discovery page](frontend/src/components/HotelDiscovery.vue) |
+| “Just use Hotel Finder as the name” | Final branding and hotel-focused illustration |
+
+Two failed approaches were corrected: markers were initially configured before
+map bounds existed, and default marker Enter opened a popup without selecting the
+list item. Initializing the view first and adding explicit keyboard selection
+fixed both. Browser rechecks confirmed the changes in
+[HotelMap.vue](frontend/src/components/HotelMap.vue).
+[The evidence log](docs/assignment2-ai-evidence.md) links prompts to implementation
+and verification details.

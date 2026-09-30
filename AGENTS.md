@@ -31,7 +31,28 @@
 - Vue displays backend prices and clears stale results/history when the current account changes. Anonymous searches are unrecorded and use base prices.
 - Verify account errors, per-user/query/day isolation, the $100 → $120 threshold, migration, booking CRUD, and restart persistence. See `docs/design.md` and `docs/verification.md`.
 
-## Frontend
+## Assignment 2 — Live Discovery
+
+- Preserve the original fictional search, accounts, prices, bookings, and SQLite data.
+  Public hotel-place information belongs to a separate discovery feature and must
+  never be presented as a priced or bookable sample stay.
+- Model: validated external-place schemas; existing SQLite storage/migrations remain
+  in the Model. Controllers: exact U.S. ZIP resolution, Geoapify requests, radius,
+  limits, normalization, and safe errors. Vue: input, list/map selection, and feedback.
+- Use string ZIPs, exact country/postcode verification, and a 5 km radius about
+  the returned point. Keep provider IDs and honest missing-field labels. Preserve
+  attribution; do not invent rates, ratings, availability, or reservations.
+- Geocoding and Places keys stay in the backend `.env`; never copy them into Vite
+  configuration. Use mocked failures and rate limits rather than exhausting quota.
+- Dependency loop: CHECK the environment, explain the exact installation and get
+  the student's approval, TAKE ACTION, then VERIFY the installed version and checks.
+- Verification loop: state expected behavior, run the smallest relevant test,
+  correct in-scope failures, rerun affected checks, and record expected/observed
+  evidence. Run regression tests, lint/build, and browser list/map/keyboard checks.
+- Assignment 2 Part 1 has no shortlist persistence. Add shortlist storage only
+  when Part 2 is authorized. Keep the early mockup and report evidence accessible.
+
+## Frontend implementation
 
 - Use Vue 3 with the Composition API and `<script setup>`.
 - Place application source under `frontend/src/`.

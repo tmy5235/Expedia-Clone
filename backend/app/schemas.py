@@ -75,3 +75,30 @@ class Credentials(BaseModel):
         if not value.strip():
             raise ValueError('Enter a password.')
         return value
+
+
+class DiscoveryCenter(BaseModel):
+    postcode: str
+    country_code: Literal['us']
+    latitude: float
+    longitude: float
+    locality: str | None = None
+
+
+class DiscoveredHotel(BaseModel):
+    """An external place is not a priced sample stay or a reservation."""
+    place_id: str
+    name: str | None = None
+    address: str | None = None
+    latitude: float
+    longitude: float
+
+
+class HotelDiscoveryResponse(BaseModel):
+    provider: Literal['geoapify'] = 'geoapify'
+    center: DiscoveryCenter
+    radius_meters: int
+    result_limit: int
+    limit_reached: bool
+    omitted_count: int
+    hotels: list[DiscoveredHotel]
