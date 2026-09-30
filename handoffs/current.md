@@ -36,9 +36,13 @@
 - Report names GPT-6 Astra, confirmed by the user. User will attach the supplied
   video separately with the report; no hosted URL is requested or pending.
   Companion video filename: IST 402 - Assignment 2.1 SR.mov.
-- No commit, push or course submission performed. Assessed revision/publication
-  still pending; before publication review earlier ZIP-milestone changes present
-  in the working tree and finalize instructor-accessible evidence links.
+- Reviewed implementation and evidence saved in local commit `3e432bcb22d0cd24ae8e78538de1958deb6e8237`.
+  Report links are pinned to this assessed revision. The report is finalized in
+  a subsequent documentation commit so its text can include the implementation SHA.
+- Automatic approval review rejected `git push origin main`: explicit authorization
+  is needed for publication to tmy5235/Expedia-Clone and its main branch. No push or
+  course submission occurred. Request that exact approval before retrying; pinned
+  links will not work for the instructor until the commits are published.
 
 ## Documentation validation
 
