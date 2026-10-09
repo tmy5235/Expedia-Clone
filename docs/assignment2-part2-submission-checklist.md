@@ -18,12 +18,15 @@ four real-model cases using entirely fictional fixtures.
 
 ## Final publication status
 
-- Student reports the recording is complete; its accessible link is still needed.
+- Student reports the recording is complete and will provide it in the Canvas
+  submission comment. The report identifies that location.
 - Source and evidence are published on `rag_integration`. Assessed application
   commit: `dd495d1bc8b979694eac94af5a9b32b65f4bed9c`.
 - Report source/evidence links are pinned to that commit. The repository is public.
-- The final remaining report edit is the recording URL. After verifying access,
-  upload the root `report.md` to Canvas. Do not upload before inserting that link.
+- Upload the root `report.md` to Canvas and include the recording in the
+  submission comment. Confirm the instructor can open it. The assignment requests
+  a video link inside the report; the comment placement is the student’s chosen
+  delivery method, not a verified instructor exception.
 
 The report is already written; the student does not need to start another report
 from scratch. A deployed public website, vector database and Figma file are not

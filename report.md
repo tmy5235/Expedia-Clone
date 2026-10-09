@@ -12,7 +12,8 @@ Working branch: `rag_integration`. Assessed application/evidence commit:
 The branch includes the local-storage foundation and RAG extension. The
 [Part 1 report](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-part1-report.md) is retained separately.
 
-**Demo recording: completed by the student; accessible link awaiting insertion.**
+**Demo recording:** See the accompanying Canvas submission comment for the
+student’s screen-recorded demonstration.
 
 Use the existing dependencies: Python 3.11+ (tested 3.14.7), Node `^22.18.0 || >=24.12.0`
 (tested 24.18.1). No dependencies were added for the chatbot. Existing HTTPX
@@ -286,6 +287,6 @@ numeric-date no-match case. No normal hotel/history records were modified.
 
 The repository includes the source, startup instructions, early mockup, research,
 fixed JSON, live/mock traces, and expected-versus-observed verification linked
-above. The demonstration recording link must be inserted under Project access and setup
-before upload. All source and evidence links above are pinned to the assessed
+above. The screen recording accompanies this report in the Canvas submission
+comment. All source and evidence links above are pinned to the assessed
 application commit; later documentation-only commits do not change that code.

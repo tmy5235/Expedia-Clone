@@ -1,5 +1,14 @@
 # Current Handoff
 
+## Final report ready for student upload
+
+Student clarified that the recording will be provided in a Canvas submission
+comment. Updated report and supporting status pages to identify that location
+and removed the recording-URL placeholder. This supersedes older URL blockers.
+The assignment asks for a video link within report.md; comment placement is the
+student’s choice, not a verified instructor exception. No recording access or
+Canvas upload has been verified by the agent. Assessed code remains dd495d1.
+
 ## Publication complete; recording URL needed
 
 Published branch rag_integration to origin. Assessed application/evidence commit:

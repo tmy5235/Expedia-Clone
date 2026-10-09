@@ -1,6 +1,6 @@
 # RAG context and verification — Part 2.2
 
-Observation date: October 8, 2026, America/New_York. **Live OpenAI and mock verification complete. The source/evidence are published at assessed commit `dd495d1`. The student reports the recording complete; its accessible URL is still needed for the final report.**
+Observation date: October 8, 2026, America/New_York. **Live OpenAI and mock verification complete. The source/evidence are published at assessed commit `dd495d1`. The student reports the recording complete and will provide it in the Canvas submission comment, as identified in the final report.**
 
 ## Reproduce deterministic verification
 
