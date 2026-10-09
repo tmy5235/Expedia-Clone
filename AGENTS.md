@@ -103,3 +103,17 @@ Trigger: When the user says **“Run the smoke test”**, verify the working app
 ### Combined Trigger
 
 When the user says **“AutoLoop: run the smoke test”**, run the SmokeTest macro. If an in-scope check fails, use the AutoLoop rules to make the smallest correction and repeat the smoke test until it passes, five correction cycles are exhausted, or a stopping condition is reached.
+
+## Assignment 2.2 — RAG extension (October 1 revision)
+
+- Preserve Add/Remove Local, local-first lookup, frozen discovery and Assignment 1.
+- Store chat tables/migrations and bounded read-only retrieval in the Model;
+  provider calls, prompt loading, query/answer workflow and safe errors in controllers.
+- Load `prompts/hotel-assistant.md` at startup. Keep credentials in the ignored
+  project-root `.env`; never expose keys or send account/booking tables to the LLM.
+- First LLM request proposes SQL; backend validates/executes it; second request
+  receives the original question and retrieved records. Save stage-labeled traces.
+- Enforce allowed tables, read-only access, result/work limits and full-stay nightly
+  completeness. Checkout is excluded; missing nights are not available.
+- Label rates/rooms as simulated course data. Distinguish mock evidence from live
+  calls; do not claim full-credit verification until the real provider workflow runs.

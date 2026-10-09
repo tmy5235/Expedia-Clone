@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="760" viewBox="0 0 1100 760">
+<rect width="1100" height="760" fill="#f5f8f6"/><g font-family="Arial" fill="#193f45">
+<text x="40" y="55" font-size="28">Hotel Finder · Part 2 chatbot — early mockup</text>
+<text x="40" y="90" font-size="16">Prepared before chatbot implementation · October 8, 2026</text>
+<rect x="40" y="120" width="1020" height="80" rx="12" fill="white" stroke="#9bb8ad"/>
+<text x="65" y="155" font-size="20">Explore hotels: existing ZIP search + synchronized list/map</text>
+<text x="65" y="180" font-size="15">Preserve Add to Local, Remove from Local and local-first lookup.</text>
+<rect x="40" y="225" width="1020" height="385" rx="12" fill="white" stroke="#9bb8ad"/>
+<text x="65" y="265" font-size="26">Ask about your saved hotels</text>
+<text x="65" y="295" font-size="15">Simulated course rates and availability. Saved subset only. No reservations.</text>
+<rect x="65" y="315" width="275" height="265" rx="8" fill="#edf4ef"/>
+<text x="85" y="345" font-size="18">Saved conversations</text><text x="85" y="380" font-size="15">+ New conversation</text>
+<text x="85" y="415" font-size="15">Three cheapest near 16803…</text>
+<text x="370" y="345" font-size="16">You: Available October 11–13 near 16803?</text>
+<text x="370" y="390" font-size="16">Assistant: matching hotels, complete stay totals,</text>
+<text x="370" y="415" font-size="16">nightly evidence and reasons supported by records.</text>
+<text x="370" y="455" font-size="15">▸ View retrieval: proposed SQL → records → answer</text>
+<rect x="370" y="490" width="475" height="65" rx="6" fill="#f6f7f7" stroke="#9bb8ad"/>
+<text x="390" y="525" font-size="16">Ask a question with a ZIP and dates…</text>
+<rect x="865" y="490" width="165" height="65" rx="6" fill="#215b60"/>
+<text x="920" y="529" font-size="18" fill="white">Send</text>
+<text x="40" y="650" font-size="18">States: loading (“Checking saved stays…”), grounded answer, no matches, retryable error.</text>
+<text x="40" y="685" font-size="16">Keyboard: labeled input + native buttons/disclosures; trace and conversations survive refresh.</text>
+<text x="40" y="720" font-size="16">Small screens: conversation picker above messages. Evidence uses readable wrapping and scrolling.</text></g></svg>

@@ -139,7 +139,7 @@ def test_migrate_version_one_without_reseed_or_changed_relationships(tmp_path):
         assert db.execute('SELECT * FROM users').fetchall() == [('U006', 'Demo Traveler 6', 'traveler6', 'classroom-demo')]
         assert db.execute('SELECT * FROM bookings').fetchall() == [('custom', 'U006', 'T008', '2026-09-01', 'cancelled', 20000)]
         assert db.execute('PRAGMA foreign_key_check').fetchall() == []
-        assert db.execute('PRAGMA user_version').fetchone()[0] == 2
+        assert db.execute('PRAGMA user_version').fetchone()[0] == 5
 
 
 def test_price_rounds_to_cents_and_does_not_mutate_base():

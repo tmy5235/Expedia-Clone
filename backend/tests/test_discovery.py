@@ -1,6 +1,7 @@
 """Repeatable provider/route checks. Every request is mocked; DBs are temporary."""
 import logging
 from pathlib import Path
+import sqlite3
 import traceback
 
 from fastapi.testclient import TestClient
@@ -157,3 +158,7 @@ def test_route_validation_success_unresolved_and_configuration(tmp_path: Path, p
         monkeypatch.setattr(locations, "load_geoapify_api_key", lambda: "")
         assert client.get("/api/discovery/hotels?postcode=00501").status_code == 503
         assert client.get("/health").status_code == 200
+    with sqlite3.connect(tmp_path / "test.sqlite3") as db:
+        # Schema support must not turn frozen Part 1 search into a save action.
+        assert db.execute('SELECT count(*) FROM saved_hotels').fetchone()[0] == 0
+        assert db.execute('SELECT count(*) FROM demo_hotel_nights').fetchone()[0] == 0

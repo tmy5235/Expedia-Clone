@@ -44,10 +44,10 @@ function formatDate(value) {
 </script>
 
 <template>
-  <section class="booking-demo" aria-label="Assignment 1 classroom demo">
+  <section class="booking-demo" aria-label="Stay search and bookings">
 
-    <h2>Fictional booking demonstration</h2>
-    <p>Search the supplied sample stays by hotel name. These local classroom records are separate from live hotel discovery.</p>
+    <h2>Find a stay</h2>
+    <p>Search stays by hotel name and manage your bookings. Preview bookings do not create real reservations.</p>
 
     <AccountPanel :user="user" :busy="accountBusy || busy || isLoading" :error="accountError" :message="accountMessage"
       @submit="account.submit" @logout="account.logout" @retry="account.initialize" />

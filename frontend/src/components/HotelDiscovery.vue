@@ -1,10 +1,14 @@
 <script setup>
-import { nextTick, onBeforeUnmount, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import HotelMap from './HotelMap.vue'
+import HotelAssistant from './HotelAssistant.vue'
 import { useDiscovery } from '../composables/useDiscovery.js'
 
-const { postcode, result, selectedId, selectedHotel, status, error, isLoading, search, select, clear } = useDiscovery()
+const { postcode, result, selectedId, selectedHotel, status, error, isLoading, search, select, clear,
+  source, savedIds, pendingIds, hasPending, actionFeedback, addLocal, removeLocal } = useDiscovery()
 const list = ref(null)
+const mapKey = computed(() => JSON.stringify([result.value?.center, result.value?.hotels.map(hotel => hotel.place_id)]))
+const money = cents => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100)
 
 async function selectFromMap(placeId) {
   select(placeId)
@@ -32,10 +36,10 @@ onBeforeUnmount(clear)
             <div>
               <label for="discovery-zip">Where to? <span>U.S. ZIP code</span></label>
               <input id="discovery-zip" v-model="postcode" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="Enter a five-digit ZIP"
-                aria-label="U.S. ZIP code" :disabled="isLoading" :aria-invalid="status === 'invalid'" aria-describedby="discovery-help discovery-feedback" />
+                aria-label="U.S. ZIP code" :disabled="isLoading || hasPending" :aria-invalid="status === 'invalid'" aria-describedby="discovery-help discovery-feedback" />
             </div>
           </div>
-          <button class="search-button" :disabled="isLoading" type="submit">{{ isLoading ? 'Searching…' : 'Find hotels' }}<span v-if="!isLoading" aria-hidden="true">→</span></button>
+          <button class="search-button" :disabled="isLoading || hasPending" type="submit">{{ isLoading ? 'Searching…' : 'Find hotels' }}<span v-if="!isLoading" aria-hidden="true">→</span></button>
         </div>
         <p id="discovery-help" class="search-help">Five digits, including leading zeros. No sign-in needed.</p>
       </form>
@@ -43,6 +47,10 @@ onBeforeUnmount(clear)
       <div id="discovery-feedback" aria-live="polite" :aria-busy="isLoading">
         <p v-if="isLoading" class="feedback" role="status">Finding hotels near ZIP {{ postcode }}…</p>
         <p v-else-if="error" class="feedback error" role="alert">{{ error }}</p>
+      </div>
+      <div class="local-feedback" aria-live="polite">
+        <p v-for="(feedback, id) in actionFeedback" :key="id" class="feedback" :class="{ error: feedback.failed }"
+          :role="feedback.failed ? 'alert' : 'status'">{{ feedback.name }}: {{ feedback.text }}</p>
       </div>
 
       <div v-if="status === 'idle'" class="welcome">
@@ -56,12 +64,14 @@ onBeforeUnmount(clear)
           <span class="result-count">{{ result.hotels.length }} {{ result.hotels.length === 1 ? 'hotel' : 'hotels' }} returned</span>
         </div>
         <p class="result-context">Within 5 km of the returned ZIP {{ result.center.postcode }} location.</p>
-        <p class="result-limit">Up to {{ result.result_limit }} places per search; coverage varies. {{ result.limit_reached ? 'Result limit reached—more hotels may exist.' : 'Results are not an exhaustive hotel inventory.' }}</p>
+        <p class="result-source">{{ source === 'local' ? 'Your saved hotels' : 'Nearby hotels' }}</p>
+        <p v-if="source === 'local'" class="result-limit">Showing your saved hotels for this ZIP. Rates and availability are simulated, not live offers.</p>
+        <p v-else class="result-limit">Up to {{ result.result_limit }} places per search; coverage varies. {{ result.limit_reached ? 'Result limit reached—more hotels may exist.' : 'Results are not an exhaustive hotel inventory.' }}</p>
         <p v-if="result.omitted_count" class="feedback">{{ result.omitted_count }} provider {{ result.omitted_count === 1 ? 'record was' : 'records were' }} omitted because of missing or invalid location/ID data, duplicates, or the search limits.</p>
-        <p v-if="status === 'empty'" class="feedback" role="status">{{ result.omitted_count ? 'No displayable hotels were returned for this search.' : 'No hotels were returned within 5 km of this ZIP location.' }} Try another ZIP code.</p>
+        <p v-if="status === 'empty'" class="feedback" role="status">{{ source === 'local' ? 'No saved hotels remain for this ZIP. Select Find hotels to search again.' : result.omitted_count ? 'No displayable hotels were returned for this search.' : 'No hotels were returned within 5 km of this ZIP location. Try another ZIP code.' }}</p>
         <p class="selection-status" role="status">{{ selectedHotel ? `Selected: ${selectedHotel.name || 'Name not provided'}` : 'Select a hotel or map pin to take a closer look.' }}</p>
         <div class="discovery-results" :class="{ 'map-only': !result.hotels.length }">
-          <ol v-if="result.hotels.length" ref="list" class="hotel-list" aria-label="Hotels returned by Geoapify">
+          <ol v-if="result.hotels.length" ref="list" class="hotel-list" :aria-label="source === 'local' ? 'Hotels saved locally for this ZIP' : 'Hotels returned by Geoapify'">
             <li v-for="(hotel, index) in result.hotels" :key="hotel.place_id">
               <button type="button" class="hotel-card" :aria-pressed="selectedId === hotel.place_id"
                 :aria-label="`Show hotel ${index + 1} on map: ${hotel.name || 'Name not provided'}`" @click="select(hotel.place_id)">
@@ -73,15 +83,33 @@ onBeforeUnmount(clear)
                   <span class="selection-label">{{ selectedId === hotel.place_id ? 'Selected on map' : 'View on map' }} <span aria-hidden="true">↗</span></span>
                 </span>
               </button>
+              <div class="local-actions" :aria-label="`Local storage for ${hotel.name || 'unnamed hotel'}`">
+                <button type="button" :disabled="savedIds.has(hotel.place_id) || pendingIds.has(hotel.place_id)"
+                  :aria-label="`Add to Local: ${hotel.name || 'Name not provided'}`" @click="addLocal(hotel)">Add to Local</button>
+                <span v-if="savedIds.has(hotel.place_id)" class="saved-label">Saved locally</span>
+                <button v-if="savedIds.has(hotel.place_id)" type="button" :disabled="pendingIds.has(hotel.place_id)"
+                  :aria-label="`Remove from Local: ${hotel.name || 'Name not provided'}`" @click="removeLocal(hotel)">Remove from Local</button>
+              </div>
+              <div v-if="source === 'local'" class="demo-nights">
+                <p>Nightly rates · USD</p>
+                <table v-if="hotel.demo_nights.length">
+                  <caption class="sr-only">Nightly rates for {{ hotel.name || 'unnamed hotel' }}</caption>
+                  <thead><tr><th scope="col">Stay date</th><th scope="col">Per night</th><th scope="col">Rooms available</th></tr></thead>
+                  <tbody><tr v-for="night in hotel.demo_nights" :key="night.stay_date"><th scope="row">{{ night.stay_date }}</th><td>{{ money(night.nightly_rate_cents) }}</td><td>{{ night.rooms_available }}</td></tr></tbody>
+                </table>
+                <p v-else>Nightly rates are not available for this hotel.</p>
+              </div>
             </li>
           </ol>
-          <HotelMap :key="result.center.postcode" :result="result" :selected-id="selectedId" @select="selectFromMap" />
+          <HotelMap :key="mapKey" :result="result" :selected-id="selectedId" @select="selectFromMap" />
         </div>
         <details class="location-detail"><summary>Search location details</summary><p>ZIP {{ result.center.postcode }}, US · {{ result.center.locality || 'Locality not provided' }} · {{ result.center.latitude.toFixed(5) }}, {{ result.center.longitude.toFixed(5) }}</p></details>
       </section>
 
+      <HotelAssistant :collection-key="JSON.stringify([...savedIds])" />
+
       <footer id="about-search" class="discovery-footer">
-        <div><h2>Assignment 2.1 · IST 402</h2><p>Searches use a 5 km circle around the returned ZIP location, not your device location or the ZIP boundary. Hotel locations only—prices, ratings, availability, and reservations aren’t provided.</p></div>
+        <div><h2>About Hotel Finder</h2><p>Discover hotels within 5 km of your searched ZIP location and save your favorites to compare stays. Hotel locations come from Geoapify. Booking is not available through Hotel Finder.</p></div>
         <p class="attribution">Powered by <a href="https://www.geoapify.com/">Geoapify</a><br>© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</p>
       </footer>
     </div>
@@ -122,6 +150,16 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; font-size
 .results-heading h2 { font-family: Georgia, serif; font-weight: 400; font-size: 2rem; margin: 0; line-height: 1.2; }
 .result-count { flex-shrink: 0; font-size: 0.75rem; font-weight: 650; color: #345f5c; background: #eef4f0; border-radius: 20px; padding: 0.5rem 0.85rem; }
 .result-context { font-size: 0.86rem; color: #526c6e; margin-top: 0.65rem; }
+.result-source { margin-top: 0.7rem; font-weight: 700; color: #215b60; }
+.local-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; padding: 0.65rem 0.3rem; font-size: 0.75rem; }
+.local-actions button { border: 1px solid #aab9ba; border-radius: 6px; padding: 0.5rem 0.65rem; background: white; color: #215b60; }
+.local-actions button:disabled { opacity: 0.55; cursor: not-allowed; }
+.saved-label { color: #215b60; font-weight: 650; }
+.demo-nights { padding: 0.7rem; background: #f0f5f4; border-radius: 8px; font-size: 0.7rem; }
+.demo-nights p { margin-bottom: 0.5rem; line-height: 1.5; }
+.demo-nights table { width: 100%; border-collapse: collapse; }
+.demo-nights th, .demo-nights td { text-align: left; padding: 0.35rem 0.2rem; border-bottom: 1px solid #d8e1e0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .result-limit { font-size: 0.74rem; color: #65787a; margin-top: 0.45rem; line-height: 1.6; }
 .selection-status { font-size: 0.8rem; color: #4a6267; margin: 1.35rem 0 0.8rem; min-height: 1.2rem; }
 .discovery-results { display: grid; grid-template-columns: minmax(17rem, 0.78fr) minmax(0, 1.4fr); gap: 1.1rem; align-items: start; }

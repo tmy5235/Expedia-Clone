@@ -11,6 +11,10 @@ This folder keeps the major user instructions that shaped the project. It is not
 
 7. [Assignment 2 Part 1](007-live-hotel-discovery.md) — extend ZIP lookup to live hotel discovery and a synchronized map, with research, mockup, and evidence.
 
-Prompts 1–6 preserve the earlier work. Prompt 7 describes the current assignment scope.
+8. [Assignment 2 Part 2.2](008-assignment2-rag.md) — extend local storage with checked SQL retrieval, grounded answers, persistent traces and verification.
+
+Prompts 1–7 preserve earlier scope decisions. Prompt 8 describes the current
+assignment. [hotel-assistant.md](hotel-assistant.md) is the backend runtime prompt,
+loaded at startup; it is separate from these selected development instructions.
 
 Add another numbered prompt only when a new instruction changes the project scope, implementation, data model, or verification process. Leave out routine follow-up questions, tool output, secrets, and personal information.

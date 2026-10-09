@@ -1,0 +1,151 @@
+{
+  "label": "FICTIONAL FIXTURE \u2014 not live Geoapify or model evidence",
+  "center": {
+    "postcode": "16803",
+    "country_code": "us",
+    "locality": "Fictional Test Center",
+    "latitude": 40.8,
+    "longitude": -77.86
+  },
+  "hotels": [
+    {
+      "hotel": {
+        "place_id": "fixture-0",
+        "name": "Fictional Pine Inn",
+        "address": "Fictional test address",
+        "latitude": 40.801,
+        "longitude": -77.86
+      },
+      "demo_nights": [
+        {
+          "stay_date": "2026-10-10",
+          "nightly_rate_cents": 8000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-11",
+          "nightly_rate_cents": 8000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-12",
+          "nightly_rate_cents": 12000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-13",
+          "nightly_rate_cents": 8000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-14",
+          "nightly_rate_cents": 8000,
+          "rooms_available": 20
+        }
+      ]
+    },
+    {
+      "hotel": {
+        "place_id": "fixture-1",
+        "name": "Fictional Brook Hotel",
+        "address": "Fictional test address",
+        "latitude": 40.802,
+        "longitude": -77.86
+      },
+      "demo_nights": [
+        {
+          "stay_date": "2026-10-10",
+          "nightly_rate_cents": 9000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-11",
+          "nightly_rate_cents": 9000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-12",
+          "nightly_rate_cents": 9000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-13",
+          "nightly_rate_cents": 9000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-14",
+          "nightly_rate_cents": 9000,
+          "rooms_available": 20
+        }
+      ]
+    },
+    {
+      "hotel": {
+        "place_id": "fixture-2",
+        "name": "Fictional Missing Night",
+        "address": "Fictional test address",
+        "latitude": 40.803000000000004,
+        "longitude": -77.86
+      },
+      "demo_nights": [
+        {
+          "stay_date": "2026-10-10",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-11",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-13",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-14",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        }
+      ]
+    },
+    {
+      "hotel": {
+        "place_id": "fixture-3",
+        "name": "Fictional Sold Out",
+        "address": "Fictional test address",
+        "latitude": 40.804,
+        "longitude": -77.86
+      },
+      "demo_nights": [
+        {
+          "stay_date": "2026-10-10",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-11",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-12",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 0
+        },
+        {
+          "stay_date": "2026-10-13",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        },
+        {
+          "stay_date": "2026-10-14",
+          "nightly_rate_cents": 10000,
+          "rooms_available": 20
+        }
+      ]
+    }
+  ]
+}

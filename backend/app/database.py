@@ -8,7 +8,7 @@ from typing import Iterator
 from uuid import uuid4
 
 from app.hotel_search import DATA_DIRECTORY, _read_csv
-from app.migrations import migrate_accounts
+from app.migrations import migrate_accounts, migrate_saved_hotels, migrate_saved_hotel_locations, migrate_chat
 
 
 class RecordNotFound(ValueError):
@@ -53,10 +53,25 @@ class Database:
             # Lock before checking the marker so simultaneous starts cannot seed twice.
             db.execute("BEGIN IMMEDIATE")
             version = db.execute("PRAGMA user_version").fetchone()[0]
+            if version == 5:
+                return
+            if version == 4:
+                migrate_chat(db)
+                return
+            if version == 3:
+                migrate_saved_hotel_locations(db)
+                migrate_chat(db)
+                return
             if version == 2:
+                migrate_saved_hotels(db)
+                migrate_saved_hotel_locations(db)
+                migrate_chat(db)
                 return
             if version == 1:
                 migrate_accounts(db)
+                migrate_saved_hotels(db)
+                migrate_saved_hotel_locations(db)
+                migrate_chat(db)
                 return
             if version != 0:
                 raise RuntimeError("Unsupported database schema version.")
@@ -94,6 +109,9 @@ class Database:
                                [tuple(row[column] for column in columns) for row in rows])
             db.execute("PRAGMA user_version = 1")
             migrate_accounts(db)
+            migrate_saved_hotels(db)
+            migrate_saved_hotel_locations(db)
+            migrate_chat(db)
 
     def search(self, hotel_name: str) -> list[dict]:
         query = hotel_name.strip()

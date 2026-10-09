@@ -1,0 +1,132 @@
+{
+  "database_path": "/Users/trevoryuhaniak/Documents/ChatGPT/expedia-clone/backend/data/expedia.sqlite3",
+  "sha256": "ab8169b07c3289869b9181bc2feb0737443d8be53fd4007ff91445fdadabc96e",
+  "schema_version": 2,
+  "tables": [
+    {
+      "name": "bookings",
+      "sql": "CREATE TABLE bookings (\n                    booking_id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(user_id),\n                    trip_id TEXT NOT NULL REFERENCES trips(trip_id), booked_on TEXT NOT NULL,\n                    status TEXT NOT NULL CHECK(status IN ('confirmed', 'cancelled')), total_cents INTEGER CHECK(total_cents >= 0))"
+    },
+    {
+      "name": "hotels",
+      "sql": "CREATE TABLE hotels (\n                    hotel_id TEXT PRIMARY KEY, hotel_name TEXT NOT NULL,\n                    city TEXT NOT NULL, state TEXT NOT NULL,\n                    nightly_rate_cents INTEGER NOT NULL CHECK(nightly_rate_cents >= 0))"
+    },
+    {
+      "name": "search_history",
+      "sql": "CREATE TABLE search_history (\n        search_id INTEGER PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(user_id),\n        query TEXT NOT NULL, searched_at TEXT NOT NULL, search_day TEXT NOT NULL,\n        search_count INTEGER NOT NULL CHECK(search_count > 0))"
+    },
+    {
+      "name": "sessions",
+      "sql": "CREATE TABLE sessions (\n        token TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(user_id))"
+    },
+    {
+      "name": "trips",
+      "sql": "CREATE TABLE trips (\n                    trip_id TEXT PRIMARY KEY, hotel_id TEXT NOT NULL REFERENCES hotels(hotel_id),\n                    trip_name TEXT NOT NULL, check_in TEXT NOT NULL, check_out TEXT NOT NULL,\n                    CHECK(julianday(check_out) > julianday(check_in)))"
+    },
+    {
+      "name": "users",
+      "sql": "CREATE TABLE users (user_id TEXT PRIMARY KEY, display_name TEXT NOT NULL, username TEXT, password TEXT)"
+    }
+  ],
+  "hotel_columns": [
+    {
+      "cid": 0,
+      "name": "hotel_id",
+      "type": "TEXT",
+      "notnull": 0,
+      "dflt_value": null,
+      "pk": 1
+    },
+    {
+      "cid": 1,
+      "name": "hotel_name",
+      "type": "TEXT",
+      "notnull": 1,
+      "dflt_value": null,
+      "pk": 0
+    },
+    {
+      "cid": 2,
+      "name": "city",
+      "type": "TEXT",
+      "notnull": 1,
+      "dflt_value": null,
+      "pk": 0
+    },
+    {
+      "cid": 3,
+      "name": "state",
+      "type": "TEXT",
+      "notnull": 1,
+      "dflt_value": null,
+      "pk": 0
+    },
+    {
+      "cid": 4,
+      "name": "nightly_rate_cents",
+      "type": "INTEGER",
+      "notnull": 1,
+      "dflt_value": null,
+      "pk": 0
+    }
+  ],
+  "hotel_rows": [
+    {
+      "hotel_id": "H001",
+      "hotel_name": "Harbor Lantern Hotel",
+      "city": "Boston",
+      "state": "MA",
+      "nightly_rate_cents": 15000
+    },
+    {
+      "hotel_id": "H002",
+      "hotel_name": "Maple Square Inn",
+      "city": "Boston",
+      "state": "MA",
+      "nightly_rate_cents": 12000
+    },
+    {
+      "hotel_id": "H003",
+      "hotel_name": "Metro Garden Hotel",
+      "city": "New York",
+      "state": "NY",
+      "nightly_rate_cents": 20000
+    },
+    {
+      "hotel_id": "H004",
+      "hotel_name": "Riverside Studio Hotel",
+      "city": "New York",
+      "state": "NY",
+      "nightly_rate_cents": 17500
+    },
+    {
+      "hotel_id": "H005",
+      "hotel_name": "Liberty Lane Inn",
+      "city": "Philadelphia",
+      "state": "PA",
+      "nightly_rate_cents": 11000
+    },
+    {
+      "hotel_id": "H006",
+      "hotel_name": "Museum Walk Hotel",
+      "city": "Philadelphia",
+      "state": "PA",
+      "nightly_rate_cents": 14000
+    },
+    {
+      "hotel_id": "H007",
+      "hotel_name": "Capitol Grove Hotel",
+      "city": "Washington",
+      "state": "DC",
+      "nightly_rate_cents": 16000
+    },
+    {
+      "hotel_id": "H008",
+      "hotel_name": "Valley Trail Inn",
+      "city": "State College",
+      "state": "PA",
+      "nightly_rate_cents": 10000
+    }
+  ],
+  "foreign_key_violations": []
+}

@@ -30,7 +30,7 @@ function submit() {
           <button type="button" :disabled="busy" @click="creating = !creating">{{ creating ? 'Back to login' : 'Create an account instead' }}</button>
         </div>
       </form>
-      <p class="demo-note">Fictional classroom accounts only. Use a made-up password.</p>
+      <p class="demo-note">Use a test account and a password you do not use elsewhere.</p>
     </template>
     <p v-if="busy" role="status">Updating account…</p>
     <p v-if="error" class="error" role="alert">{{ error }}</p>

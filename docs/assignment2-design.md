@@ -1,5 +1,10 @@
 # Hotel Finder — discovery API and MVC design
 
+Scope: frozen Part 1 API/design record. Part 2 adds separate local-storage and
+chat routes; see the [local workflow](assignment2-part2-local-workflow.md) and
+[RAG architecture/verification](rag-context.md). Statements about no persistence
+below describe the original discovery endpoint, not the complete current app.
+
 ## MVC responsibilities
 
 The visible app is **Hotel Finder**. `App.vue` contains the header and

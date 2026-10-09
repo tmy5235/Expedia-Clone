@@ -16,14 +16,14 @@ const showBookingDemo = new URLSearchParams(window.location.search).get('demo') 
         </span>
         <span>Hotel Finder</span>
       </a>
-      <nav aria-label="Main navigation"><a class="nav-link" href="/#hotel-search">Explore hotels</a><a class="nav-link" href="/#about-search">How it works</a></nav>
+      <nav aria-label="Main navigation"><a class="nav-link" href="/#hotel-search">Explore hotels</a><a class="nav-link" href="/#hotel-assistant">Ask about saved hotels</a><a class="nav-link" href="/#about-search">How it works</a></nav>
     </div>
   </header>
 
   <main>
     <HotelDiscovery v-if="!showBookingDemo" />
-    <section v-else class="legacy-page" aria-label="Assignment 1 booking demo">
-      <h1>Assignment 1 booking demo</h1>
+    <section v-else class="legacy-page" aria-label="Your stays">
+      <h1>Your stays</h1>
       <p><a href="/">Return to hotel discovery</a></p>
       <BookingDemo />
     </section>

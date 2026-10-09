@@ -1,5 +1,9 @@
 # Hotel Finder — verification
 
+Historical Part 1 checkpoint. Counts, interface labels and screenshots below
+record September 29, not the current Part 2 release. Current Part 2 results and
+repeat instructions are in [RAG verification](rag-context.md).
+
 Observed September 29, 2026, in America/New_York. Environment: Python 3.14.7,
 Node 24.18.1, Leaflet 1.9.4. Tests use temporary SQLite databases and mocked
 provider transport; normal accounts and bookings were not changed.

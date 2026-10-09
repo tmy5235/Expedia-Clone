@@ -1,0 +1,156 @@
+{
+  "provider": "geoapify",
+  "center": {
+    "postcode": "16802",
+    "country_code": "us",
+    "latitude": 40.803167822,
+    "longitude": -77.861384958,
+    "locality": "State College"
+  },
+  "radius_meters": 5000,
+  "result_limit": 20,
+  "limit_reached": true,
+  "omitted_count": 0,
+  "hotels": [
+    {
+      "place_id": "51268f029ffa7653c05961f07a7ab6654440f00103f9018ef41f2f0200000092031b5363686f6c617220486f74656c20537461746520436f6c6c656765",
+      "name": "Scholar Hotel State College",
+      "address": "Scholar Hotel State College, 205 East Beaver Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.7946313,
+      "longitude": -77.8590467
+    },
+    {
+      "place_id": "51c9378023267753c059159ee117a8654440f00103f90169bed82f00000000920313486f74656c20537461746520436f6c6c656765",
+      "name": "Hotel State College",
+      "address": "Hotel State College, 100 West College Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.7941923,
+      "longitude": -77.8617028
+    },
+    {
+      "place_id": "51cb0b40dbbb7753c059106e8d4a02664440f00101f90187b00800000000009203104e697474616e79204c696f6e20496e6e",
+      "name": "Nittany Lion Inn",
+      "address": "Nittany Lion Inn, 200 West Park Avenue, State College, PA 16803, United States of America",
+      "latitude": 40.79694492250212,
+      "longitude": -77.87084084753512
+    },
+    {
+      "place_id": "51780c8ffd2c7753c059d41dd5fa6c654440f00103f9014f37a40701000000920319487961747420506c61636520537461746520436f6c6c656765",
+      "name": "Hyatt Place State College",
+      "address": "Hyatt Place State College, 219 West Beaver Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.7923883,
+      "longitude": -77.862121
+    },
+    {
+      "place_id": "516d48b96e4c7753c0596dd411d550654440f00102f9012a5aee030000000092032047726164756174652062792048696c746f6e20537461746520436f6c6c656765",
+      "name": "Graduate by Hilton State College",
+      "address": "Graduate by Hilton State College, 125 South Atherton Street, State College, PA 16801, United States of America",
+      "latitude": 40.791529306131316,
+      "longitude": -77.86404007047686
+    },
+    {
+      "place_id": "51a214b0a44b7853c059cc6471edd5664440f00102f9016780db100000000092030e436f6d666f727420537569746573",
+      "name": "Comfort Suites",
+      "address": "Comfort Suites, 132 Village Drive, State College, PA 16803, United States of America",
+      "latitude": 40.80340354954532,
+      "longitude": -77.87961690135356
+    },
+    {
+      "place_id": "515bcbed77597853c059bb618377dd664440f00102f901946edb1000000000920309536c65657020496e6e",
+      "name": "Sleep Inn",
+      "address": "Sleep Inn, 111 Village Drive, State College, PA 16803, United States of America",
+      "latitude": 40.80363363185048,
+      "longitude": -77.88046072218042
+    },
+    {
+      "place_id": "512ece62abce7553c05996a1301650674440f00102f9017af8e3160000000092031948616d70746f6e20496e6e20537461746520436f6c6c656765",
+      "name": "Hampton Inn State College",
+      "address": "Hampton Inn State College, 1101 East College Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.807131551500035,
+      "longitude": -77.84073910378422
+    },
+    {
+      "place_id": "5113ade1ba8c7853c059a22c766fb8664440f00102f901195df30f000000009203134461797320496e6e2062792057796e6468616d",
+      "name": "Days Inn by Wyndham",
+      "address": "Days Inn by Wyndham, 1274 North Atherton Street, State College, PA 16803, United States of America",
+      "latitude": 40.80250352163536,
+      "longitude": -77.88358947790793
+    },
+    {
+      "place_id": "51e4a474c1737553c059f7e23dd29f674440f00102f901a1984b100000000092031f48696c746f6e2047617264656e20496e6e20537461746520436f6c6c656765",
+      "name": "Hilton Garden Inn State College",
+      "address": "Hilton Garden Inn State College, 1221 East College Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.809564857690866,
+      "longitude": -77.8351901663878
+    },
+    {
+      "place_id": "513022333f4c7553c0598d807f01cc674440f00102f901ad29401200000000920314436f756e74727920496e6e202620537569746573",
+      "name": "Country Inn & Suites",
+      "address": "Country Inn & Suites, 1357 East College Avenue, State College, PA 16801, United States of America",
+      "latitude": 40.810913264519606,
+      "longitude": -77.83277873986731
+    },
+    {
+      "place_id": "51228b4fee927553c0598ae27968a4644440f00102f9016cbb7e0d000000009203275265736964656e636520496e6e206279204d617272696f747420537461746520436f6c6c656765",
+      "name": "Residence Inn by Marriott State College",
+      "address": "Residence Inn by Marriott State College, 1555 University Drive, State College, PA 16801, United States of America",
+      "latitude": 40.7862673373357,
+      "longitude": -77.83709295051497
+    },
+    {
+      "place_id": "5139ed7d60be7553c059ebba933a5f644440f00102f901516075130000000092031452616d61646120537461746520436f6c6c656765",
+      "name": "Ramada State College",
+      "address": "Ramada State College, 1450 South Atherton Street, State College, PA 16801, United States of America",
+      "latitude": 40.78415615285288,
+      "longitude": -77.83974468514943
+    },
+    {
+      "place_id": "513e06d4fb977553c059209d268568644440f00102f90167bb7e0d00000000920323436f75727479617264206279204d617272696f747420537461746520436f6c6c656765",
+      "name": "Courtyard by Marriott State College",
+      "address": "Courtyard by Marriott State College, 1730 University Drive, State College, PA 16801, United States of America",
+      "latitude": 40.78443970094145,
+      "longitude": -77.8374013491202
+    },
+    {
+      "place_id": "5107c51a7b677953c05966bd3d3e96684440f00102f901aae63f0e00000000920311537072696e6748696c6c20537569746573",
+      "name": "SpringHill Suites",
+      "address": "SpringHill Suites, 1935 Waddle Road, State College, PA 16803, United States of America",
+      "latitude": 40.817085056444554,
+      "longitude": -77.89694097151015
+    },
+    {
+      "place_id": "5186996f95767953c0593758b83681684440f00102f901a7e63f0e00000000920313486f6c6964617920496e6e2045787072657373",
+      "name": "Holiday Inn Express",
+      "address": "Holiday Inn Express, 1925 Waddle Road, State College, PA 16803, United States of America",
+      "latitude": 40.8164432907219,
+      "longitude": -77.8978627767411
+    },
+    {
+      "place_id": "51bb52125e147653c059dfcb0a17706a4440f00102f901034f8e03000000009203295468652050656e6e2053746174657220486f74656c202620436f6e666572656e63652043656e746572",
+      "name": "The Penn Stater Hotel & Conference Center",
+      "address": "The Penn Stater Hotel & Conference Center, 215 Innovation Boulevard, Houserville, College Township, PA 16803, United States of America",
+      "latitude": 40.83154571559111,
+      "longitude": -77.84499313153621
+    },
+    {
+      "place_id": "514da99a207c7953c05934a1e0a7a2684440f00102f901a8e63f0e0000000092031448616d70746f6e20496e6e202620537569746573",
+      "name": "Hampton Inn & Suites",
+      "address": "Hampton Inn & Suites, 1955 Waddle Road, State College, PA 16803, United States of America",
+      "latitude": 40.81746386020896,
+      "longitude": -77.89820113280912
+    },
+    {
+      "place_id": "51749605dd177953c05944cecdeb80694440f00102f9019f2a3f0e000000009203124361726e6567696520496e6e202620537061",
+      "name": "Carnegie Inn & Spa",
+      "address": "Carnegie Inn & Spa, 100 Cricklewood Drive, State College, PA 16803, United States of America",
+      "latitude": 40.8242468600188,
+      "longitude": -77.89208150430369
+    },
+    {
+      "place_id": "51c241bb3ea17953c059f49be7627f694440f00102f901332a3f0e0000000092030f546f667472656573205265736f7274",
+      "name": "Toftrees Resort",
+      "address": "Toftrees Resort, 1 Country Club Lane, State College, PA 16803, United States of America",
+      "latitude": 40.824200022783685,
+      "longitude": -77.9004666165047
+    }
+  ]
+}

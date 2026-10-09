@@ -14,6 +14,10 @@ from app.controllers.search import SearchController
 from app.controllers import discovery, locations
 
 from app.database import Database, RecordNotFound
+from app.local_hotel_routes import local_hotel_router
+from app.chat_store import ChatStore
+from app.controllers.chat import ChatController
+from app.chat_routes import chat_router
 
 
 Session = Annotated[str | None, Cookie(alias="expedia_session")]
@@ -24,6 +28,7 @@ def create_app(database_path: Path | None = None, clock: Callable[[], datetime] 
         "EXPEDIA_DB_PATH", Path(__file__).resolve().parents[1] / "data" / "expedia.sqlite3"
     )))
 
+    chat = ChatController(ChatStore(database))
     accounts = AccountController(database)
     searches = SearchController(database, clock)
     geoapify_configured = False
@@ -33,16 +38,26 @@ def create_app(database_path: Path | None = None, clock: Callable[[], datetime] 
         nonlocal geoapify_configured
         geoapify_configured = bool(load_geoapify_api_key())
         database.initialize()
+        chat.start()
         yield
 
     application = FastAPI(title="Expedia Clone API", lifespan=lifespan)
+    application.include_router(local_hotel_router(database))
+    application.include_router(chat_router(chat))
+    application.state.chat = chat
 
     @application.exception_handler(RecordNotFound)
     async def not_found(_request, error: RecordNotFound):
         return JSONResponse(status_code=404, content={"detail": str(error)})
 
     @application.exception_handler(sqlite3.Error)
-    async def storage_error(_request, _error: sqlite3.Error):
+    async def storage_error(_request, error: sqlite3.Error):
+        # Extended SQLite codes retain the primary result code in the low byte.
+        code = (getattr(error, 'sqlite_errorcode', 0) or 0) & 0xFF
+        if code in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED):
+            return JSONResponse(status_code=503, content={
+                'detail': 'Database is busy. Save or revert pending edits in DB Browser for SQLite, then try again.'
+            })
         return JSONResponse(status_code=503, content={"detail": "Database unavailable. Please try again."})
 
     @application.get("/health")

@@ -93,7 +93,9 @@ PRAGMA foreign_key_check;
 PRAGMA user_version;
 ```
 
-Expected H008 rate: `10000` cents. Foreign-key check: no rows. Schema version: 2.
+Expected H008 rate: `10000` cents. Foreign-key check: no rows. Schema version: 5
+after the additive Part 2 chat migration (version 4 added ZIP associations). See the
+[Part 2 schema checkpoint](assignment2-part2-schema.md) for the two new tables.
 New account IDs start `U-`; original `U001`–`U006` and their booking references remain.
 A fresh verification run ends with 8 hotels, 12 trips, 8 users (6 supplied + A/B),
 and 7 bookings (6 supplied + the cancelled test booking).
