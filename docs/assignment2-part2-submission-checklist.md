@@ -16,12 +16,14 @@ Latest recorded checks: 228 backend tests, 47 frontend tests, lint/build and
 browser verification passed. The latest suggested-question reliability fix reran those suites and verified
 four real-model cases using entirely fictional fixtures.
 
-## Still required before submission
+## Final publication status
 
-1. **Recording completed**, as reported by the student. Review the recording against the outline below and check for visible credentials or private information.
-2. **Share an instructor-accessible video link.** Add it to the report and confirm access without a new access request.
-3. **Finalize project publication.** Review and commit/push the Part 2 work; add the assessed commit to the report and use permanent repository links for referenced files/images. Current work is uncommitted, and existing local relative links are not sufficient for a standalone Canvas upload. Confirm instructor access.
-4. **Review and upload `report.md`.** Resolve the draft/pending markers only after the corresponding work is complete, then upload the final file to the Part 2 submission.
+- Student reports the recording is complete; its accessible link is still needed.
+- Source and evidence are published on `rag_integration`. Assessed application
+  commit: `dd495d1bc8b979694eac94af5a9b32b65f4bed9c`.
+- Report source/evidence links are pinned to that commit. The repository is public.
+- The final remaining report edit is the recording URL. After verifying access,
+  upload the root `report.md` to Canvas. Do not upload before inserting that link.
 
 The report is already written; the student does not need to start another report
 from scratch. A deployed public website, vector database and Figma file are not

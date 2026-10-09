@@ -7,9 +7,10 @@ Live provider checks and deterministic mock checks are labeled separately.
 ## Project access and setup
 
 Repository: [tmy5235/Expedia-Clone](https://github.com/tmy5235/Expedia-Clone).
-Working branch: `rag_integration`. **Assessed commit: pending commit/publication.**
+Working branch: `rag_integration`. Assessed application/evidence commit:
+[`dd495d1`](https://github.com/tmy5235/Expedia-Clone/commit/dd495d1bc8b979694eac94af5a9b32b65f4bed9c).
 The branch includes the local-storage foundation and RAG extension. The
-[Part 1 report](docs/assignment2-part1-report.md) is retained separately.
+[Part 1 report](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-part1-report.md) is retained separately.
 
 **Demo recording: completed by the student; accessible link awaiting insertion.**
 
@@ -57,12 +58,12 @@ Open http://127.0.0.1:5173. Search a ZIP and Add to Local, then use **Ask about 
 hotels**. `GET /api/chat/status` reports model and configured/not-configured without
 exposing credentials or making a paid call. The existing database remains at
 `backend/data/expedia.sqlite3`; `EXPEDIA_DB_PATH` selects a separate test database.
-[README](README.md) documents the full API, configuration and data behavior.
+[README](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/README.md) documents the full API, configuration and data behavior.
 
 ## Research and early design
 
-[Part 2 research notes](docs/assignment2-rag-research.md) were written before chatbot
-source implementation, building on the [Part 1 research](docs/assignment2-research.md).
+[Part 2 research notes](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-rag-research.md) were written before chatbot
+source implementation, building on the [Part 1 research](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-research.md).
 
 | Source | Useful pattern or limitation | Adopted decision |
 | --- | --- | --- |
@@ -71,7 +72,7 @@ source implementation, building on the [Part 1 research](docs/assignment2-resear
 | [GPT-4.1 mini](https://developers.openai.com/api/docs/models/gpt-4.1-mini) | Documents Chat Completions/structured-output support; account access is not established by documentation | Configurable model; verify real access separately |
 | [Python sqlite3](https://docs.python.org/3/library/sqlite3.html) / [SQLite authorizer](https://www.sqlite.org/c3ref/set_authorizer.html) | Engine authorization checks statements during preparation | Read-only connection, default-deny authorizer, work/result limits, separate history writes |
 
-![Early chatbot mockup, prepared before source implementation](docs/screenshots/assignment2-rag-early-mockup.svg)
+![Early chatbot mockup, prepared before source implementation](https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-early-mockup.svg)
 
 The mockup established a saved-conversation sidebar, composer, answer area,
 retrieval disclosure, and loading/no-match/error states. The final implementation
@@ -103,22 +104,22 @@ SQLite VM-step work budget. Remote models never connect to SQLite.
 The existing Model owns additive schema v5 migration, hotel persistence and
 conversation storage. Controllers own LLM calls, prompts, validation and error
 translation. Vue handles input, request feedback, history selection and display.
-[Implementation](backend/app/controllers/chat.py), [read-only Model](backend/app/chat_store.py),
-[prompt](prompts/hotel-assistant.md), [Vue panel](frontend/src/components/HotelAssistant.vue).
+[Implementation](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/controllers/chat.py), [read-only Model](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/chat_store.py),
+[prompt](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/prompts/hotel-assistant.md), [Vue panel](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/frontend/src/components/HotelAssistant.vue).
 
 The local-storage foundation retains Add/Remove Local, deduplication, ZIP context,
 local-first lookup and dated simulated rates. Part 1 discovery contracts/list/map
 and Assignment 1 account/pricing/booking behavior remain covered by regressions.
 Migration never reseeds an existing database. Normal application data was not
 used for test mutations. Existing storage evidence remains in the
-[local workflow checkpoint](docs/assignment2-part2-local-workflow.md).
+[local workflow checkpoint](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-part2-local-workflow.md).
 
 ## Demonstration evidence
 
 **Live provider workflow verified with `gpt-4.1-mini`.** The student configured the
 API key privately. Real first/second model requests returned the expected multi-night,
 follow-up single-night and no-match results. These checks used an isolated database
-with four public places from the [previously captured Geoapify response](docs/evidence/assignment2-part2/api-response.json),
+with four public places from the [previously captured Geoapify response](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-part2/api-response.json),
 ZIP **16802**, and deliberately simulated course nightly records. No new Geoapify
 request was made and the normal application database was unchanged.
 
@@ -128,12 +129,12 @@ request was made and the normal application database was unchanged.
 | “What about just the night of October 12, 2026?” | ZIP retained from history; checkout Oct 13; Hotel State College **$90**, Scholar Hotel **$120**, 20 simulated rooms each. |
 | “Now check the night of October 20, 2026, in that same ZIP.” | Empty retrieval; answer explains no saved rates/available rooms for that date and suggests changing dates/ZIP or saving more hotels. No invented alternatives. |
 
-[Full live question → proposed/executed SQL → records → second request → answer trace](docs/evidence/assignment2-rag/live-verified-trace.json).
+[Full live question → proposed/executed SQL → records → second request → answer trace](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/live-verified-trace.json).
 The frontend loaded and displayed the real saved answers after a backend restart.
 The live trace also preserves failed attempts used to improve the implementation;
 HTTP 200 alone was not counted as evidence of a correct answer.
 
-![Real OpenAI answer using explicitly simulated rates](docs/screenshots/assignment2-rag-live-answer.jpg)
+![Real OpenAI answer using explicitly simulated rates](https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-live-answer.jpg)
 
 Live corrections: separate query/answer system instructions after the first model
 returned SQL for both stages; explicitly require single-night checkout; close active
@@ -142,7 +143,7 @@ column only for a verified one-night stay. New tests cover stage separation,
 wrong-stage rejection, cursor cleanup and safe single-night handling.
 
 The reproducible **MOCK** browser run used ZIP `16803` on October 8, 2026 Eastern,
-with [fixed fictional JSON](docs/evidence/assignment2-rag/fixed-hotels.json) and
+with [fixed fictional JSON](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/fixed-hotels.json) and
 `/tmp/expedia-rag-browser.sqlite3`. No live Geoapify search or live model call was
 made in this run. The recorded mock answer and trace explicitly identify mock output.
 
@@ -178,10 +179,10 @@ lists those nightly prices, minimum 20 rooms, checkout exclusion and simulated
 course data. Missing-night and sold-out hotels are excluded. The second request
 contains the original question plus those verified nightly records.
 
-![Mock answer; not live model evidence](docs/screenshots/assignment2-rag-mock-answer.jpg)
+![Mock answer; not live model evidence](https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-mock-answer.jpg)
 
-[Full question/SQL/results/request/answer trace](docs/evidence/assignment2-rag/mock-browser-traces.json)
-and [detailed reproduction/recording instructions](docs/rag-context.md).
+[Full question/SQL/results/request/answer trace](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/mock-browser-traces.json)
+and [detailed reproduction/recording instructions](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/rag-context.md).
 
 ## Expected versus observed verification
 
@@ -202,7 +203,7 @@ and [detailed reproduction/recording instructions](docs/rag-context.md).
 | Card Enter / map Space | Shared selection remains synchronized | Brook selected in both views |
 | Send with keyboard | Pending feedback, disabled duplicate controls, eventual answer | Observed |
 | Browser refresh + restart both services | Identical saved traces, preserved hotel data | 25 trace rows matched byte-for-byte fields; 4 hotels/19 nights remained; no FK violations |
-| Mobile 390 px | Usable composer/history without horizontal overflow | Document and viewport widths both 390; [screenshot](docs/screenshots/assignment2-rag-mock-mobile.jpg) |
+| Mobile 390 px | Usable composer/history without horizontal overflow | Document and viewport widths both 390; [screenshot](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-mock-mobile.jpg) |
 | Live-model successful/no-match exchange | Real proposed SQL and grounded second reply | **Verified with real OpenAI calls; captured public places and simulated rates** |
 
 Repeat automated checks:
@@ -212,7 +213,7 @@ Repeat automated checks:
 (cd frontend && npm test && npm run lint && npm run build)
 ```
 
-The [verification guide](docs/rag-context.md) includes temporary-server commands,
+The [verification guide](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/rag-context.md) includes temporary-server commands,
 fixed fixture details and read-only SQLite queries. One existing third-party
 Starlette TestClient deprecation warning remains; no dependency change was made.
 
@@ -237,9 +238,9 @@ an LLM. Do not confuse it with the development assistant's model.
 | Selected prompt/instruction | Code, decision or evidence |
 | --- | --- |
 | “continue this project to Part 2.2 … Start working on the requirements … let me know when you need me” | Preserve local-storage foundation; add full two-stage workflow on `rag_integration` |
-| Assignment: “User question → LLM proposes SQL … validates and executes a read-only local query … sent to the LLM again” | [Controller](backend/app/controllers/chat.py), [Model](backend/app/chat_store.py), [prompt](prompts/hotel-assistant.md) |
+| Assignment: “User question → LLM proposes SQL … validates and executes a read-only local query … sent to the LLM again” | [Controller](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/controllers/chat.py), [Model](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/chat_store.py), [prompt](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/prompts/hotel-assistant.md) |
 | In-class activity: “Save the trace as each step happens” | Schema v5 messages with role/stage/timestamp, prompt hash, both request payloads and restart checks |
-| Assignment: “checkout is excluded and missing nights must not be treated as available” | Independent nightly validation and $180/$200/missing-night fixtures in [tests](backend/tests/test_chat.py) |
+| Assignment: “checkout is excluded and missing nights must not be treated as available” | Independent nightly validation and $180/$200/missing-night fixtures in [tests](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/tests/test_chat.py) |
 | First implementation used `ChatError(ValueError)` | Failed 401/403/429 tests showed the broad parse-error handler swallowed intended statuses. Changed it to `Exception`; reran targeted and complete suites successfully |
 | First live response returned SQL instead of prose; a follow-up omitted checkout and another proposal exposed a retained read lock | Separated stage instructions, clarified the date contract, closed active cursors before error persistence, and added regression coverage. Retained failed and corrected live traces for disclosure. |
 | Row-bound fixture initially used an unused cross-join table | SQLite authorization rejected it before the intended row-bound assertion. Revised the fixture to reference the approved ZIP column; independently verified the 31st-row rejection |
@@ -257,13 +258,13 @@ spacing and long conversation titles were simplified.
 Browser verification with the captured-place fixture and real OpenAI:
 **Find the cheapest** filled ZIP 16802 / Oct 10, 2026 and returned the verified
 $80/$90/$100 options; keyboard submission and 390 px mobile layout passed.
-[Guided live trace](docs/evidence/assignment2-rag/guided-question-live.json) and
-[updated layout](docs/screenshots/assignment2-rag-guided-answer.jpg).
+[Guided live trace](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/guided-question-live.json) and
+[updated layout](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-guided-answer.jpg).
 
 The final interface uses travel-app language and concise simulated-rate disclosures.
 Earlier screenshots/traces preserve their original wording. The current prompt
 retains the same data limitations while avoiding classroom language in new answers.
-[Current interface](docs/screenshots/assignment2-product-copy.jpg).
+[Current interface](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-product-copy.jpg).
 
 ## Suggested-question reliability correction
 
@@ -278,11 +279,13 @@ Seven added regression cases pass; the full suite now has 228 backend tests
 (46 RAG), with 47 frontend tests, lint/build passing. Four real model checks on
 entirely fictional temporary data passed the three suggested questions plus the
 numeric-date no-match case. No normal hotel/history records were modified.
-[Expected/observed and browser evidence](docs/rag-context.md#suggested-question-failures-and-date-recognition-fix),
-[complete live traces](docs/evidence/assignment2-rag/room-projection-live.json).
+[Expected/observed and browser evidence](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/rag-context.md#suggested-question-failures-and-date-recognition-fix),
+[complete live traces](https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/room-projection-live.json).
 
 ## Submission artifacts
 
 The repository includes the source, startup instructions, early mockup, research,
 fixed JSON, live/mock traces, and expected-versus-observed verification linked
-above. The demonstration recording is linked under Project access and setup.
+above. The demonstration recording link must be inserted under Project access and setup
+before upload. All source and evidence links above are pinned to the assessed
+application commit; later documentation-only commits do not change that code.

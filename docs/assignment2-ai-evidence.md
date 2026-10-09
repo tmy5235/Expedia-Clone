@@ -56,8 +56,8 @@ Codex assisted with the research, early SVG mockup, two-stage controller,
 read-only SQL validation, additive SQLite migration, Vue interface, automated
 and browser verification, and documentation. The student supplied requirements
 and the private key, confirmed the development model, and tested the interface.
-The student reports that the narrated recording is complete. Its accessible URL
-and the assessed publication are being finalized in the report.
+The student reports that the narrated recording is complete. Source/evidence are published at assessed commit `dd495d1`. The recording’s
+accessible URL is the remaining report detail.
 
 [Selected Part 2 instructions](../prompts/008-assignment2-rag.md) link to the
 implementation and evidence. The [report AI evidence log](../report.md#ai-disclosure-and-evidence-log)

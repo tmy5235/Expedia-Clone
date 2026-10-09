@@ -1,5 +1,16 @@
 # Current Handoff
 
+## Publication complete; recording URL needed
+
+Published branch rag_integration to origin. Assessed application/evidence commit:
+`dd495d1bc8b979694eac94af5a9b32b65f4bed9c`. Report has permanent GitHub source
+links and raw image links. Credential and prohibited-file scans passed.
+User reports recording complete but has not supplied a URL or local path; async
+question is pending. Insert/verify its accessible link before Canvas upload.
+Do not claim the recording was reviewed or the Canvas submission was completed.
+No source changes since last 228 backend/47 frontend/lint/build pass; this turn
+prepared publication and documentation only. Normal app stays running.
+
 ## Submission finalization in progress
 
 User reports recording complete and authorized finalizing the submission. Awaiting

@@ -1,0 +1,132 @@
+{
+  "authentication": "none",
+  "assessed_commit": "dd495d1bc8b979694eac94af5a9b32b65f4bed9c",
+  "results": [
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/README.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/chat_store.py",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/app/controllers/chat.py",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/backend/tests/test_chat.py",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-part1-report.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-part2-local-workflow.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-rag-research.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/assignment2-research.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-part2/api-response.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/fixed-hotels.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/guided-question-live.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/live-verified-trace.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/mock-browser-traces.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/evidence/assignment2-rag/room-projection-live.json",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/rag-context.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-product-copy.jpg",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-guided-answer.jpg",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-mock-mobile.jpg",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/frontend/src/components/HotelAssistant.vue",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/blob/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/prompts/hotel-assistant.md",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://github.com/tmy5235/Expedia-Clone/commit/dd495d1bc8b979694eac94af5a9b32b65f4bed9c",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-early-mockup.svg",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-live-answer.jpg",
+      "http_status": 200,
+      "curl_exit": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tmy5235/Expedia-Clone/dd495d1bc8b979694eac94af5a9b32b65f4bed9c/docs/screenshots/assignment2-rag-mock-answer.jpg",
+      "http_status": 200,
+      "curl_exit": 0
+    }
+  ],
+  "checked_at_utc": "2026-10-09T03:00:22.942342+00:00"
+}
